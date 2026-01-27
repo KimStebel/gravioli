@@ -1,6 +1,6 @@
 use macroquad::prelude::*;
 
-const BALL_RADIUS: f32 = 100.0;
+const BALL_RADIUS: f32 = 80.0;
 
 struct Ball {
     x: f32,
@@ -11,14 +11,15 @@ struct Ball {
 
 impl Ball {
     fn update(&mut self) {
-        if self.y < screen_height() - BALL_RADIUS {
-            self.speed_y += 0.1;
-        } else {
-            self.speed_y *= -0.8;
-        }
-
         self.x += self.speed_x;
         self.y += self.speed_y;
+        if self.y < screen_height() - BALL_RADIUS {
+            self.speed_y += 0.2 * get_frame_time() * 60.0;
+        } else {
+            self.speed_y = 0.0;
+            self.y = screen_height() - BALL_RADIUS;
+        }
+
     }
 }
 
@@ -35,12 +36,16 @@ fn window_conf() -> Conf {
 async fn main() {
     let mut ball = Ball {
         x: screen_width() / 2.0,
-        y: 600.0,
+        y: screen_height() - BALL_RADIUS,
         speed_x: 0.0,
         speed_y: 0.0,
     };
 
     loop {
+        if is_key_pressed(KeyCode::W) && ball.y >= screen_height() - BALL_RADIUS {
+            ball.speed_y = -10.0;
+        }
+
         ball.update();
 
         clear_background(BLACK);
