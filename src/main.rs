@@ -52,6 +52,7 @@ async fn main() {
 
     let start_time = get_time();
     let mut boosted = false;
+    let mut show_hud = true;
 
     loop {
         let elapsed = get_time() - start_time;
@@ -61,13 +62,18 @@ async fn main() {
             boosted = true;
         }
         let dt = get_frame_time();
+        if is_key_pressed(KeyCode::H) {
+            show_hud = !show_hud;
+        }
         controls::handle_input(&mut rocket, dt);
         physics::update_rocket_speed(&mut rocket, &planet, dt);
         physics::move_rocket(&mut rocket, dt);
         clear_background(BLACK);
         drawing::draw_planet(&planet);
         drawing::draw_rocket(&rocket);
-        drawing::draw_hud(elapsed, &rocket);
+        if show_hud {
+            drawing::draw_hud(elapsed, &rocket);
+        }
         next_frame().await;
     }
 }
