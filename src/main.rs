@@ -71,23 +71,11 @@ async fn main() {
             boosted = true;
         }
         let dt = get_frame_time();
-        if is_key_pressed(KeyCode::H) {
-            show_hud = !show_hud;
-        }
-        controls::handle_input(&mut rocket, dt);
+        controls::handle_input(&mut rocket, dt, &mut show_hud);
         sounds.update(&rocket);
         physics::update_rocket_speed(&mut rocket, &planet, dt);
         physics::move_rocket(&mut rocket, dt);
-        clear_background(BLACK);
-        draw_texture_ex(&images.bg_texture, 0.0, 0.0, WHITE, DrawTextureParams {
-            dest_size: Some(Vec2::new(screen_width(), screen_height())),
-            ..Default::default()
-        });
-        drawing::draw_planet(&planet, &images.planet_texture);
-        drawing::draw_rocket(&rocket);
-        if show_hud {
-            drawing::draw_hud(elapsed, &rocket);
-        }
+        drawing::draw(&planet, &rocket, &images, elapsed, show_hud);
         next_frame().await;
     }
 }
