@@ -14,6 +14,7 @@ pub struct Rocket {
     pub orientation: f32, // degrees, 0/360 = up
     pub landed: bool,
     pub engine_on: bool,
+    pub fuel: f32, // seconds of engine burn remaining
 }
 
 impl Rocket {
@@ -26,6 +27,7 @@ impl Rocket {
             orientation: 90.0,
             landed: false,
             engine_on: false,
+            fuel: 20.0,
         }
     }
 }

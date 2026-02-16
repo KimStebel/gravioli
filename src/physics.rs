@@ -11,8 +11,12 @@ pub fn update_rocket_speed(rocket: &mut Rocket, planet: &Planet, dt: f32) {
     rocket.speed_x += (dx / dist) * accel * dt;
     rocket.speed_y += (dy / dist) * accel * dt;
 
-    if rocket.engine_on {
+    if rocket.engine_on && rocket.fuel > 0.0 {
         apply_thrust(rocket, dt);
+        rocket.fuel = (rocket.fuel - dt).max(0.0);
+        if rocket.fuel == 0.0 {
+            rocket.engine_on = false;
+        }
     }
 }
 
@@ -40,7 +44,7 @@ mod tests {
     use super::*;
 
     fn make_rocket(x: f32, y: f32, speed_x: f32, speed_y: f32) -> Rocket {
-        Rocket { x, y, speed_x, speed_y, orientation: 0.0, landed: false, engine_on: false }
+        Rocket { x, y, speed_x, speed_y, orientation: 0.0, landed: false, engine_on: false, fuel: 20.0 }
     }
 
     #[test]

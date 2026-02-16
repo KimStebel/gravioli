@@ -60,6 +60,7 @@ fn draw_rocket(rocket: &Rocket) {
 
 fn draw_hud(elapsed: f64, rocket: &Rocket) {
     let speed = (rocket.speed_x * rocket.speed_x + rocket.speed_y * rocket.speed_y).sqrt();
-    draw_text(&format!("Time: {:.1}s", elapsed), screen_width() - 200.0, screen_height() - 40.0, 24.0, WHITE);
-    draw_text(&format!("Speed: {:.0} px/s", speed), screen_width() - 200.0, screen_height() - 20.0, 24.0, WHITE);
+    draw_text(&format!("Time: {:.1}s", elapsed), screen_width() - 200.0, screen_height() - 60.0, 24.0, WHITE);
+    draw_text(&format!("Speed: {:.0} px/s", speed), screen_width() - 200.0, screen_height() - 40.0, 24.0, WHITE);
+    draw_text(&format!("Fuel: {:.1}s", rocket.fuel), screen_width() - 200.0, screen_height() - 20.0, 24.0, WHITE);
 }
