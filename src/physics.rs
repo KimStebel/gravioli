@@ -134,4 +134,39 @@ mod tests {
         assert!(rocket.speed_y > 0.0);
         assert!((rocket.speed_x - rocket.speed_y).abs() < f32::EPSILON);
     }
+
+    #[test]
+    fn collision_inside_planet() {
+        let rocket = make_rocket(100.0, 100.0, 0.0, 0.0);
+        let planet = make_planet(100.0, 100.0);
+        assert!(check_collision(&rocket, &planet));
+    }
+
+    #[test]
+    fn collision_near_center() {
+        let rocket = make_rocket(105.0, 100.0, 0.0, 0.0);
+        let planet = make_planet(100.0, 100.0);
+        assert!(check_collision(&rocket, &planet));
+    }
+
+    #[test]
+    fn no_collision_outside_planet() {
+        let rocket = make_rocket(200.0, 200.0, 0.0, 0.0);
+        let planet = make_planet(100.0, 100.0);
+        assert!(!check_collision(&rocket, &planet));
+    }
+
+    #[test]
+    fn no_collision_on_boundary() {
+        let rocket = make_rocket(130.0, 100.0, 0.0, 0.0);
+        let planet = make_planet(100.0, 100.0);
+        assert!(!check_collision(&rocket, &planet));
+    }
+
+    #[test]
+    fn collision_just_inside() {
+        let rocket = make_rocket(129.0, 100.0, 0.0, 0.0);
+        let planet = make_planet(100.0, 100.0);
+        assert!(check_collision(&rocket, &planet));
+    }
 }
