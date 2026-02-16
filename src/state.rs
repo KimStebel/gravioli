@@ -16,6 +16,20 @@ pub struct Rocket {
     pub engine_on: bool,
 }
 
+impl Rocket {
+    fn initial() -> Self {
+        Self {
+            x: 100.0,
+            y: screen_height() - 100.0,
+            speed_x: 120.0,
+            speed_y: 0.0,
+            orientation: 90.0,
+            landed: false,
+            engine_on: false,
+        }
+    }
+}
+
 pub struct GameState {
     pub planet: Planet,
     pub rocket: Rocket,
@@ -31,18 +45,14 @@ impl GameState {
                 y: screen_height() / 2.0,
                 radius: 30.0,
             },
-            rocket: Rocket {
-                x: 100.0,
-                y: screen_height() - 100.0,
-                speed_x: 200.0,
-                speed_y: 0.0,
-                orientation: 90.0,
-                landed: false,
-                engine_on: false,
-            },
+            rocket: Rocket::initial(),
             show_hud: true,
             start_time: get_time(),
         }
+    }
+
+    pub fn reset_rocket(&mut self) {
+        self.rocket = Rocket::initial();
     }
 
     pub fn elapsed(&self) -> f64 {

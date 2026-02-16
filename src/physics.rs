@@ -28,6 +28,12 @@ pub fn move_rocket(rocket: &mut Rocket, dt: f32) {
     rocket.y += rocket.speed_y * dt;
 }
 
+pub fn check_collision(rocket: &Rocket, planet: &Planet) -> bool {
+    let dx = rocket.x - planet.x;
+    let dy = rocket.y - planet.y;
+    dx * dx + dy * dy < planet.radius * planet.radius
+}
+
 #[cfg(test)]
 mod tests {
     use crate::state::Rocket;

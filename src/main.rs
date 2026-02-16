@@ -32,6 +32,9 @@ async fn main() {
         sounds.update(&game.rocket);
         physics::update_rocket_speed(&mut game.rocket, &game.planet, dt);
         physics::move_rocket(&mut game.rocket, dt);
+        if physics::check_collision(&game.rocket, &game.planet) {
+            game.reset_rocket();
+        }
         drawing::draw(&game.planet, &game.rocket, &images, game.elapsed(), game.show_hud);
         next_frame().await;
     }
