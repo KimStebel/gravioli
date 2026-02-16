@@ -1,20 +1,23 @@
 use macroquad::prelude::*;
-struct Planet {
-    x: f32,
-    y: f32,
-    radius: f32
+
+mod drawing;
+
+pub struct Planet {
+    pub x: f32,
+    pub y: f32,
+    pub radius: f32
 }
 impl Planet {
 
 }
 
-struct Rocket {
-    x: f32,
-    y: f32,
-    speed_x: f32,
-    speed_y: f32,
-    orientation: f32, // degrees, 0/360 = up
-    landed: bool
+pub struct Rocket {
+    pub x: f32,
+    pub y: f32,
+    pub speed_x: f32,
+    pub speed_y: f32,
+    pub orientation: f32, // degrees, 0/360 = up
+    pub landed: bool
 }
 
 fn window_conf() -> Conf {
@@ -56,9 +59,9 @@ async fn main() {
         update_rocket_speed(&mut rocket, &planet);
         move_rocket(&mut rocket);
         clear_background(BLACK);
-        draw_planet(&planet);
-        draw_rocket(&rocket);
-        draw_text(&format!("{:.1}s", elapsed), screen_width() - 80.0, screen_height() - 20.0, 24.0, WHITE);
+        drawing::draw_planet(&planet);
+        drawing::draw_rocket(&rocket);
+        drawing::draw_hud(elapsed);
         next_frame().await;
     }
 }
@@ -79,34 +82,4 @@ fn move_rocket(rocket: &mut Rocket) {
     let dt = get_frame_time();
     rocket.x += rocket.speed_x * dt;
     rocket.y += rocket.speed_y * dt;
-}
-
-fn draw_planet(planet: &Planet) {
-    draw_circle(planet.x, planet.y, planet.radius, Color::new(0.76, 0.60, 0.42, 1.0));
-}
-
-fn draw_rocket(rocket: &Rocket) {
-    let body_width = 10.0;
-    let body_height = 30.0;
-    let nose_height = 10.0;
-
-    let angle = rocket.orientation.to_radians();
-    let rotate = |lx: f32, ly: f32| -> (f32, f32) {
-        let rx = lx * angle.cos() - ly * angle.sin();
-        let ry = lx * angle.sin() + ly * angle.cos();
-        (rocket.x + rx, rocket.y + ry)
-    };
-
-    // Body rectangle (two triangles)
-    let bl = rotate(-body_width / 2.0, 0.0);
-    let br = rotate(body_width / 2.0, 0.0);
-    let tl = rotate(-body_width / 2.0, -body_height);
-    let tr = rotate(body_width / 2.0, -body_height);
-
-    draw_triangle(bl.into(), br.into(), tr.into(), WHITE);
-    draw_triangle(bl.into(), tr.into(), tl.into(), WHITE);
-
-    // Nose cone
-    let tip = rotate(0.0, -body_height - nose_height);
-    draw_triangle(tl.into(), tr.into(), tip.into(), WHITE);
 }
