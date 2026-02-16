@@ -57,8 +57,9 @@ async fn main() {
             rocket.speed_y += 60.0;
             boosted = true;
         }
-        physics::update_rocket_speed(&mut rocket, &planet);
-        physics::move_rocket(&mut rocket, get_frame_time());
+        let dt = get_frame_time();
+        physics::update_rocket_speed(&mut rocket, &planet, dt);
+        physics::move_rocket(&mut rocket, dt);
         clear_background(BLACK);
         drawing::draw_planet(&planet);
         drawing::draw_rocket(&rocket);

@@ -1,8 +1,7 @@
 use macroquad::prelude::*;
 use crate::{Planet, Rocket};
 
-pub fn update_rocket_speed(rocket: &mut Rocket, planet: &Planet) {
-    let dt = get_frame_time();
+pub fn update_rocket_speed(rocket: &mut Rocket, planet: &Planet, dt: f32) {
     let dx = planet.x - rocket.x;
     let dy = planet.y - rocket.y;
     let dist_sq = dx * dx + dy * dy;
@@ -65,5 +64,57 @@ mod tests {
         move_rocket(&mut rocket, 0.0);
         assert_eq!(rocket.x, 5.0);
         assert_eq!(rocket.y, 10.0);
+    }
+
+    fn make_planet(x: f32, y: f32) -> Planet {
+        Planet { x, y, radius: 30.0 }
+    }
+
+    #[test]
+    fn accelerates_toward_planet_on_right() {
+        let mut rocket = make_rocket(0.0, 0.0, 0.0, 0.0);
+        let planet = make_planet(100.0, 0.0);
+        update_rocket_speed(&mut rocket, &planet, 1.0);
+        assert!(rocket.speed_x > 0.0);
+        assert_eq!(rocket.speed_y, 0.0);
+    }
+
+    #[test]
+    fn accelerates_toward_planet_above() {
+        let mut rocket = make_rocket(0.0, 100.0, 0.0, 0.0);
+        let planet = make_planet(0.0, 0.0);
+        update_rocket_speed(&mut rocket, &planet, 1.0);
+        assert_eq!(rocket.speed_x, 0.0);
+        assert!(rocket.speed_y < 0.0);
+    }
+
+    #[test]
+    fn stronger_gravity_when_closer() {
+        let mut close = make_rocket(0.0, 0.0, 0.0, 0.0);
+        let mut far = make_rocket(0.0, 0.0, 0.0, 0.0);
+        let close_planet = make_planet(100.0, 0.0);
+        let far_planet = make_planet(1000.0, 0.0);
+        update_rocket_speed(&mut close, &close_planet, 1.0);
+        update_rocket_speed(&mut far, &far_planet, 1.0);
+        assert!(close.speed_x > far.speed_x);
+    }
+
+    #[test]
+    fn zero_dt_no_acceleration() {
+        let mut rocket = make_rocket(0.0, 0.0, 0.0, 0.0);
+        let planet = make_planet(100.0, 0.0);
+        update_rocket_speed(&mut rocket, &planet, 0.0);
+        assert_eq!(rocket.speed_x, 0.0);
+        assert_eq!(rocket.speed_y, 0.0);
+    }
+
+    #[test]
+    fn accelerates_diagonally() {
+        let mut rocket = make_rocket(0.0, 0.0, 0.0, 0.0);
+        let planet = make_planet(100.0, 100.0);
+        update_rocket_speed(&mut rocket, &planet, 1.0);
+        assert!(rocket.speed_x > 0.0);
+        assert!(rocket.speed_y > 0.0);
+        assert!((rocket.speed_x - rocket.speed_y).abs() < f32::EPSILON);
     }
 }
