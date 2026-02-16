@@ -1,8 +1,12 @@
 use macroquad::prelude::*;
 use crate::{Planet, Rocket};
 
-pub fn draw_planet(planet: &Planet) {
-    draw_circle(planet.x, planet.y, planet.radius, Color::new(0.76, 0.60, 0.42, 1.0));
+pub fn draw_planet(planet: &Planet, texture: &Texture2D) {
+    let size = planet.radius * 2.0;
+    draw_texture_ex(texture, planet.x - planet.radius, planet.y - planet.radius, WHITE, DrawTextureParams {
+        dest_size: Some(Vec2::new(size, size)),
+        ..Default::default()
+    });
 }
 
 pub fn draw_rocket(rocket: &Rocket) {

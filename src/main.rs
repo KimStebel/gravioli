@@ -1,9 +1,10 @@
 use macroquad::prelude::*;
-use macroquad::audio::{load_sound, play_sound, PlaySoundParams};
 
 mod controls;
 mod drawing;
+mod images;
 mod physics;
+mod sound;
 
 pub struct Planet {
     pub x: f32,
@@ -51,8 +52,9 @@ async fn main() {
         engine_on: false,
     };
 
-    let music = load_sound("assets/music.ogg").await.unwrap();
-    play_sound(&music, PlaySoundParams { looped: true, volume: 0.5 });
+    let images = images::Images::load().await;
+    let mut sounds = sound::Sounds::load().await;
+    sounds.start_music();
 
     let start_time = get_time();
     let mut boosted = false;
@@ -73,10 +75,15 @@ async fn main() {
             show_hud = !show_hud;
         }
         controls::handle_input(&mut rocket, dt);
+        sounds.update(&rocket);
         physics::update_rocket_speed(&mut rocket, &planet, dt);
         physics::move_rocket(&mut rocket, dt);
         clear_background(BLACK);
-        drawing::draw_planet(&planet);
+        draw_texture_ex(&images.bg_texture, 0.0, 0.0, WHITE, DrawTextureParams {
+            dest_size: Some(Vec2::new(screen_width(), screen_height())),
+            ..Default::default()
+        });
+        drawing::draw_planet(&planet, &images.planet_texture);
         drawing::draw_rocket(&rocket);
         if show_hud {
             drawing::draw_hud(elapsed, &rocket);
@@ -84,4 +91,3 @@ async fn main() {
         next_frame().await;
     }
 }
-
