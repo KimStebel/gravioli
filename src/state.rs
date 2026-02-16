@@ -20,7 +20,6 @@ pub struct GameState {
     pub planet: Planet,
     pub rocket: Rocket,
     pub show_hud: bool,
-    pub boosted: bool,
     pub start_time: f64,
 }
 
@@ -42,7 +41,6 @@ impl GameState {
                 engine_on: false,
             },
             show_hud: true,
-            boosted: false,
             start_time: get_time(),
         }
     }

@@ -27,18 +27,12 @@ async fn main() {
     let mut game = state::GameState::new();
 
     loop {
-        let elapsed = game.elapsed();
-        if !game.boosted && elapsed >= 5.0 {
-            game.rocket.speed_x -= 120.0;
-            game.rocket.speed_y += 60.0;
-            game.boosted = true;
-        }
         let dt = get_frame_time();
         controls::handle_input(&mut game.rocket, dt, &mut game.show_hud);
         sounds.update(&game.rocket);
         physics::update_rocket_speed(&mut game.rocket, &game.planet, dt);
         physics::move_rocket(&mut game.rocket, dt);
-        drawing::draw(&game.planet, &game.rocket, &images, elapsed, game.show_hud);
+        drawing::draw(&game.planet, &game.rocket, &images, game.elapsed(), game.show_hud);
         next_frame().await;
     }
 }
