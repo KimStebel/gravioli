@@ -10,6 +10,17 @@ pub fn update_rocket_speed(rocket: &mut Rocket, planet: &Planet, dt: f32) {
     let accel = gravity / dist_sq;
     rocket.speed_x += (dx / dist) * accel * dt;
     rocket.speed_y += (dy / dist) * accel * dt;
+
+    if rocket.engine_on {
+        apply_thrust(rocket, dt);
+    }
+}
+
+pub fn apply_thrust(rocket: &mut Rocket, dt: f32) {
+    let thrust = 1.0; // pixels per second squared
+    let angle = rocket.orientation.to_radians();
+    rocket.speed_x += angle.sin() * thrust * dt;
+    rocket.speed_y -= angle.cos() * thrust * dt;
 }
 
 pub fn move_rocket(rocket: &mut Rocket, dt: f32) {
@@ -23,7 +34,7 @@ mod tests {
     use super::*;
 
     fn make_rocket(x: f32, y: f32, speed_x: f32, speed_y: f32) -> Rocket {
-        Rocket { x, y, speed_x, speed_y, orientation: 0.0, landed: false }
+        Rocket { x, y, speed_x, speed_y, orientation: 0.0, landed: false, engine_on: false }
     }
 
     #[test]

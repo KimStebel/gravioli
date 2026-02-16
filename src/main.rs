@@ -19,7 +19,8 @@ pub struct Rocket {
     pub speed_x: f32,
     pub speed_y: f32,
     pub orientation: f32, // degrees, 0/360 = up
-    pub landed: bool
+    pub landed: bool,
+    pub engine_on: bool,
 }
 
 fn window_conf() -> Conf {
@@ -46,6 +47,7 @@ async fn main() {
         speed_y: 0.0,
         orientation: 90.0,
         landed: false,
+        engine_on: false,
     };
 
     let start_time = get_time();
@@ -65,7 +67,7 @@ async fn main() {
         clear_background(BLACK);
         drawing::draw_planet(&planet);
         drawing::draw_rocket(&rocket);
-        drawing::draw_hud(elapsed);
+        drawing::draw_hud(elapsed, &rocket);
         next_frame().await;
     }
 }

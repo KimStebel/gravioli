@@ -3,6 +3,12 @@ use crate::Rocket;
 
 pub fn handle_input(rocket: &mut Rocket, dt: f32) {
     update_orientation(rocket, dt, is_key_down(KeyCode::A), is_key_down(KeyCode::D));
+    if is_key_pressed(KeyCode::Z) {
+        rocket.engine_on = true;
+    }
+    if is_key_pressed(KeyCode::X) {
+        rocket.engine_on = false;
+    }
 }
 
 pub fn update_orientation(rocket: &mut Rocket, dt: f32, rotate_left: bool, rotate_right: bool) {
@@ -22,7 +28,7 @@ mod tests {
     use crate::Rocket;
 
     fn make_rocket(orientation: f32) -> Rocket {
-        Rocket { x: 0.0, y: 0.0, speed_x: 0.0, speed_y: 0.0, orientation, landed: false }
+        Rocket { x: 0.0, y: 0.0, speed_x: 0.0, speed_y: 0.0, orientation, landed: false, engine_on: false }
     }
 
     #[test]

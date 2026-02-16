@@ -29,8 +29,19 @@ pub fn draw_rocket(rocket: &Rocket) {
     // Nose cone
     let tip = rotate(0.0, -body_height - nose_height);
     draw_triangle(tl.into(), tr.into(), tip.into(), WHITE);
+
+    // Engine flames
+    if rocket.engine_on {
+        let flame_height = 15.0;
+        let fl = rotate(-body_width / 3.0, 0.0);
+        let fr = rotate(body_width / 3.0, 0.0);
+        let ftip = rotate(0.0, flame_height);
+        draw_triangle(fl.into(), fr.into(), ftip.into(), ORANGE);
+    }
 }
 
-pub fn draw_hud(elapsed: f64) {
-    draw_text(&format!("{:.1}s", elapsed), screen_width() - 80.0, screen_height() - 20.0, 24.0, WHITE);
+pub fn draw_hud(elapsed: f64, rocket: &Rocket) {
+    let speed = (rocket.speed_x * rocket.speed_x + rocket.speed_y * rocket.speed_y).sqrt();
+    draw_text(&format!("Time: {:.1}s", elapsed), screen_width() - 200.0, screen_height() - 40.0, 24.0, WHITE);
+    draw_text(&format!("Speed: {:.0} px/s", speed), screen_width() - 200.0, screen_height() - 20.0, 24.0, WHITE);
 }
