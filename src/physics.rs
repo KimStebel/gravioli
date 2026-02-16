@@ -17,7 +17,7 @@ pub fn update_rocket_speed(rocket: &mut Rocket, planet: &Planet, dt: f32) {
 }
 
 pub fn apply_thrust(rocket: &mut Rocket, dt: f32) {
-    let thrust = 1.0; // pixels per second squared
+    let thrust = 10.0; // pixels per second squared
     let angle = rocket.orientation.to_radians();
     rocket.speed_x += angle.sin() * thrust * dt;
     rocket.speed_y -= angle.cos() * thrust * dt;
