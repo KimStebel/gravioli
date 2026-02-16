@@ -58,7 +58,7 @@ async fn main() {
             boosted = true;
         }
         physics::update_rocket_speed(&mut rocket, &planet);
-        physics::move_rocket(&mut rocket);
+        physics::move_rocket(&mut rocket, get_frame_time());
         clear_background(BLACK);
         drawing::draw_planet(&planet);
         drawing::draw_rocket(&rocket);
