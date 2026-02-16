@@ -21,10 +21,13 @@ pub fn update_rocket_speed(rocket: &mut Rocket, planet: &Planet, dt: f32) {
 }
 
 pub fn apply_thrust(rocket: &mut Rocket, dt: f32) {
-    let thrust = 10.0; // pixels per second squared
+    let force = 10.0;
+    // fuel is 50% of initial mass; as fuel burns, mass decreases and acceleration increases
+    let mass = 0.5 + 0.5 * (rocket.fuel / 20.0);
+    let accel = force / mass;
     let angle = rocket.orientation.to_radians();
-    rocket.speed_x += angle.sin() * thrust * dt;
-    rocket.speed_y -= angle.cos() * thrust * dt;
+    rocket.speed_x += angle.sin() * accel * dt;
+    rocket.speed_y -= angle.cos() * accel * dt;
 }
 
 pub fn move_rocket(rocket: &mut Rocket, dt: f32) {
@@ -137,6 +140,71 @@ mod tests {
         assert!(rocket.speed_x > 0.0);
         assert!(rocket.speed_y > 0.0);
         assert!((rocket.speed_x - rocket.speed_y).abs() < f32::EPSILON);
+    }
+
+    #[test]
+    fn thrust_acceleration_at_full_fuel() {
+        let mut rocket = make_rocket(0.0, 0.0, 0.0, 0.0);
+        rocket.fuel = 20.0;
+        apply_thrust(&mut rocket, 1.0);
+        // mass = 0.5 + 0.5 * (20/20) = 1.0, accel = 10/1 = 10
+        assert!((rocket.speed_y - -10.0).abs() < f32::EPSILON);
+    }
+
+    #[test]
+    fn thrust_acceleration_at_empty_fuel() {
+        let mut rocket = make_rocket(0.0, 0.0, 0.0, 0.0);
+        rocket.fuel = 0.0;
+        apply_thrust(&mut rocket, 1.0);
+        // mass = 0.5 + 0.5 * (0/20) = 0.5, accel = 10/0.5 = 20
+        assert!((rocket.speed_y - -20.0).abs() < f32::EPSILON);
+    }
+
+    #[test]
+    fn thrust_acceleration_at_half_fuel() {
+        let mut rocket = make_rocket(0.0, 0.0, 0.0, 0.0);
+        rocket.fuel = 10.0;
+        apply_thrust(&mut rocket, 1.0);
+        // mass = 0.5 + 0.5 * (10/20) = 0.75, accel = 10/0.75 = 13.333...
+        let expected = 10.0 / 0.75;
+        assert!((rocket.speed_y - -expected).abs() < 0.001);
+    }
+
+    #[test]
+    fn thrust_stronger_with_less_fuel() {
+        let mut full = make_rocket(0.0, 0.0, 0.0, 0.0);
+        full.fuel = 20.0;
+        let mut low = make_rocket(0.0, 0.0, 0.0, 0.0);
+        low.fuel = 5.0;
+        apply_thrust(&mut full, 1.0);
+        apply_thrust(&mut low, 1.0);
+        assert!(low.speed_y.abs() > full.speed_y.abs());
+    }
+
+    #[test]
+    fn engine_off_when_fuel_runs_out() {
+        let mut rocket = make_rocket(0.0, 0.0, 0.0, 0.0);
+        rocket.engine_on = true;
+        rocket.fuel = 0.5;
+        let planet = make_planet(0.0, 10000.0);
+        update_rocket_speed(&mut rocket, &planet, 1.0);
+        assert_eq!(rocket.fuel, 0.0);
+        assert!(!rocket.engine_on);
+    }
+
+    #[test]
+    fn no_thrust_when_no_fuel() {
+        let mut with_fuel = make_rocket(0.0, 0.0, 0.0, 0.0);
+        with_fuel.engine_on = true;
+        with_fuel.fuel = 20.0;
+        let mut without_fuel = make_rocket(0.0, 0.0, 0.0, 0.0);
+        without_fuel.engine_on = true;
+        without_fuel.fuel = 0.0;
+        let planet = make_planet(0.0, 10000.0);
+        update_rocket_speed(&mut with_fuel, &planet, 1.0);
+        update_rocket_speed(&mut without_fuel, &planet, 1.0);
+        // with fuel, thrust opposes gravity so less positive speed_y
+        assert!(with_fuel.speed_y < without_fuel.speed_y);
     }
 
     #[test]
