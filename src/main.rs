@@ -1,5 +1,6 @@
 use macroquad::prelude::*;
 
+mod controls;
 mod drawing;
 mod physics;
 
@@ -58,6 +59,7 @@ async fn main() {
             boosted = true;
         }
         let dt = get_frame_time();
+        controls::handle_input(&mut rocket, dt);
         physics::update_rocket_speed(&mut rocket, &planet, dt);
         physics::move_rocket(&mut rocket, dt);
         clear_background(BLACK);
