@@ -1,4 +1,5 @@
 use macroquad::prelude::*;
+use macroquad::audio::{load_sound, play_sound, PlaySoundParams};
 
 mod controls;
 mod drawing;
@@ -50,9 +51,15 @@ async fn main() {
         engine_on: false,
     };
 
+    let music = load_sound("assets/music.ogg").await.unwrap();
+    play_sound(&music, PlaySoundParams { looped: true, volume: 0.5 });
+
     let start_time = get_time();
     let mut boosted = false;
     let mut show_hud = true;
+
+    next_frame().await;
+    next_frame().await;
 
     loop {
         let elapsed = get_time() - start_time;
