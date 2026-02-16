@@ -20,11 +20,14 @@ pub fn update_rocket_speed(rocket: &mut Rocket, planet: &Planet, dt: f32) {
     }
 }
 
-pub fn apply_thrust(rocket: &mut Rocket, dt: f32) {
+pub fn engine_accel(rocket: &Rocket) -> f32 {
     let force = 10.0;
-    // fuel is 50% of initial mass; as fuel burns, mass decreases and acceleration increases
     let mass = 0.5 + 0.5 * (rocket.fuel / 20.0);
-    let accel = force / mass;
+    force / mass
+}
+
+pub fn apply_thrust(rocket: &mut Rocket, dt: f32) {
+    let accel = engine_accel(rocket);
     let angle = rocket.orientation.to_radians();
     rocket.speed_x += angle.sin() * accel * dt;
     rocket.speed_y -= angle.cos() * accel * dt;
