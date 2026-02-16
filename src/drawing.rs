@@ -1,5 +1,5 @@
 use macroquad::prelude::*;
-use crate::{Planet, Rocket};
+use crate::state::{Planet, Rocket};
 use crate::images::Images;
 
 pub fn draw(planet: &Planet, rocket: &Rocket, images: &Images, elapsed: f64, show_hud: bool) {

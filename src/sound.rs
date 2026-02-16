@@ -1,5 +1,5 @@
 use macroquad::audio::{load_sound, play_sound, stop_sound, Sound, PlaySoundParams};
-use crate::Rocket;
+use crate::state::Rocket;
 use macroquad::prelude::*;
 
 pub struct Sounds {

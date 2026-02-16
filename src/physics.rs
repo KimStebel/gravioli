@@ -1,5 +1,5 @@
 use macroquad::prelude::*;
-use crate::{Planet, Rocket};
+use crate::state::{Planet, Rocket};
 
 pub fn update_rocket_speed(rocket: &mut Rocket, planet: &Planet, dt: f32) {
     let dx = planet.x - rocket.x;
@@ -30,7 +30,7 @@ pub fn move_rocket(rocket: &mut Rocket, dt: f32) {
 
 #[cfg(test)]
 mod tests {
-    use crate::Rocket;
+    use crate::state::Rocket;
     use super::*;
 
     fn make_rocket(x: f32, y: f32, speed_x: f32, speed_y: f32) -> Rocket {

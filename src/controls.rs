@@ -1,5 +1,5 @@
 use macroquad::prelude::*;
-use crate::Rocket;
+use crate::state::Rocket;
 
 pub fn handle_input(rocket: &mut Rocket, dt: f32, show_hud: &mut bool) {
     update_orientation(rocket, dt, is_key_down(KeyCode::A), is_key_down(KeyCode::D));
@@ -28,7 +28,7 @@ pub fn update_orientation(rocket: &mut Rocket, dt: f32, rotate_left: bool, rotat
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::Rocket;
+    use crate::state::Rocket;
 
     fn make_rocket(orientation: f32) -> Rocket {
         Rocket { x: 0.0, y: 0.0, speed_x: 0.0, speed_y: 0.0, orientation, landed: false, engine_on: false }
