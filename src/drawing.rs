@@ -3,13 +3,15 @@ use crate::state::{Planet, Rocket};
 use crate::images::Images;
 use crate::physics;
 
-pub fn draw(planet: &Planet, rocket: &Rocket, images: &Images, elapsed: f64, show_hud: bool) {
+pub fn draw(planets: &[Planet], rocket: &Rocket, images: &Images, elapsed: f64, show_hud: bool) {
     clear_background(BLACK);
     draw_texture_ex(&images.bg_texture, 0.0, 0.0, WHITE, DrawTextureParams {
         dest_size: Some(Vec2::new(screen_width(), screen_height())),
         ..Default::default()
     });
-    draw_planet(planet, &images.planet_texture);
+    for planet in planets {
+        draw_planet(planet, &images.planet_texture);
+    }
     draw_rocket(rocket);
     if show_hud {
         draw_hud(elapsed, rocket);

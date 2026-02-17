@@ -32,7 +32,7 @@ async fn main() {
         controls::handle_input(&mut game.rocket, dt, &mut game.show_hud);
         sounds.update(&game.rocket);
         physics::update(&mut game, dt);
-        drawing::draw(&game.planet, &game.rocket, &images, game.elapsed(), game.show_hud);
+        drawing::draw(&game.planets, &game.rocket, &images, game.elapsed(), game.show_hud);
         next_frame().await;
     }
 }

@@ -33,7 +33,7 @@ impl Rocket {
 }
 
 pub struct GameState {
-    pub planet: Planet,
+    pub planets: Vec<Planet>,
     pub rocket: Rocket,
     pub show_hud: bool,
     pub start_time: f64,
@@ -42,11 +42,11 @@ pub struct GameState {
 impl GameState {
     pub fn new() -> Self {
         Self {
-            planet: Planet {
+            planets: vec![Planet {
                 x: screen_width() / 2.0,
                 y: screen_height() / 2.0,
                 radius: 30.0,
-            },
+            }],
             rocket: Rocket::initial(),
             show_hud: true,
             start_time: get_time(),
