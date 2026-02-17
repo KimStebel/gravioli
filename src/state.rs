@@ -88,9 +88,9 @@ pub struct GameState {
 }
 
 impl GameState {
-    pub fn new() -> Self {
+    pub fn new(level: Level) -> Self {
         Self {
-            level: LevelState::new(Level::one()),
+            level: LevelState::new(level),
             show_hud: true,
         }
     }

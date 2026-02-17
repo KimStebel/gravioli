@@ -3,15 +3,16 @@ use crate::state::{GameState, Planet, Rocket};
 
 pub fn update(game: &mut GameState, dt: f32) {
     for planet in &game.level.level.planets {
-        update_rocket_speed(&mut game.level.rocket, planet, dt);
+        apply_gravity(&mut game.level.rocket, planet, dt);
     }
+    apply_engine(&mut game.level.rocket, dt);
     move_rocket(&mut game.level.rocket, dt);
     if game.level.level.planets.iter().any(|p| check_collision(&game.level.rocket, p)) {
         game.level.reset_rocket();
     }
 }
 
-pub fn update_rocket_speed(rocket: &mut Rocket, planet: &Planet, dt: f32) {
+fn apply_gravity(rocket: &mut Rocket, planet: &Planet, dt: f32) {
     let dx = planet.x - rocket.x;
     let dy = planet.y - rocket.y;
     let dist_sq = dx * dx + dy * dy;
@@ -20,7 +21,9 @@ pub fn update_rocket_speed(rocket: &mut Rocket, planet: &Planet, dt: f32) {
     let accel = gravity / dist_sq;
     rocket.speed_x += (dx / dist) * accel * dt;
     rocket.speed_y += (dy / dist) * accel * dt;
+}
 
+fn apply_engine(rocket: &mut Rocket, dt: f32) {
     if rocket.engine_on && rocket.fuel > 0.0 {
         apply_thrust(rocket, dt);
         rocket.fuel = (rocket.fuel - dt).max(0.0);
@@ -111,7 +114,7 @@ mod tests {
     fn accelerates_toward_planet_on_right() {
         let mut rocket = make_rocket(0.0, 0.0, 0.0, 0.0);
         let planet = make_planet(100.0, 0.0);
-        update_rocket_speed(&mut rocket, &planet, 1.0);
+        apply_gravity(&mut rocket, &planet, 1.0);
         assert!(rocket.speed_x > 0.0);
         assert_eq!(rocket.speed_y, 0.0);
     }
@@ -120,7 +123,7 @@ mod tests {
     fn accelerates_toward_planet_above() {
         let mut rocket = make_rocket(0.0, 100.0, 0.0, 0.0);
         let planet = make_planet(0.0, 0.0);
-        update_rocket_speed(&mut rocket, &planet, 1.0);
+        apply_gravity(&mut rocket, &planet, 1.0);
         assert_eq!(rocket.speed_x, 0.0);
         assert!(rocket.speed_y < 0.0);
     }
@@ -131,8 +134,8 @@ mod tests {
         let mut far = make_rocket(0.0, 0.0, 0.0, 0.0);
         let close_planet = make_planet(100.0, 0.0);
         let far_planet = make_planet(1000.0, 0.0);
-        update_rocket_speed(&mut close, &close_planet, 1.0);
-        update_rocket_speed(&mut far, &far_planet, 1.0);
+        apply_gravity(&mut close, &close_planet, 1.0);
+        apply_gravity(&mut far, &far_planet, 1.0);
         assert!(close.speed_x > far.speed_x);
     }
 
@@ -140,7 +143,7 @@ mod tests {
     fn zero_dt_no_acceleration() {
         let mut rocket = make_rocket(0.0, 0.0, 0.0, 0.0);
         let planet = make_planet(100.0, 0.0);
-        update_rocket_speed(&mut rocket, &planet, 0.0);
+        apply_gravity(&mut rocket, &planet, 0.0);
         assert_eq!(rocket.speed_x, 0.0);
         assert_eq!(rocket.speed_y, 0.0);
     }
@@ -149,7 +152,7 @@ mod tests {
     fn accelerates_diagonally() {
         let mut rocket = make_rocket(0.0, 0.0, 0.0, 0.0);
         let planet = make_planet(100.0, 100.0);
-        update_rocket_speed(&mut rocket, &planet, 1.0);
+        apply_gravity(&mut rocket, &planet, 1.0);
         assert!(rocket.speed_x > 0.0);
         assert!(rocket.speed_y > 0.0);
         assert!((rocket.speed_x - rocket.speed_y).abs() < f32::EPSILON);
@@ -199,8 +202,7 @@ mod tests {
         let mut rocket = make_rocket(0.0, 0.0, 0.0, 0.0);
         rocket.engine_on = true;
         rocket.fuel = 0.5;
-        let planet = make_planet(0.0, 10000.0);
-        update_rocket_speed(&mut rocket, &planet, 1.0);
+        apply_engine(&mut rocket, 1.0);
         assert_eq!(rocket.fuel, 0.0);
         assert!(!rocket.engine_on);
     }
@@ -213,10 +215,9 @@ mod tests {
         let mut without_fuel = make_rocket(0.0, 0.0, 0.0, 0.0);
         without_fuel.engine_on = true;
         without_fuel.fuel = 0.0;
-        let planet = make_planet(0.0, 10000.0);
-        update_rocket_speed(&mut with_fuel, &planet, 1.0);
-        update_rocket_speed(&mut without_fuel, &planet, 1.0);
-        // with fuel, thrust opposes gravity so less positive speed_y
+        apply_engine(&mut with_fuel, 1.0);
+        apply_engine(&mut without_fuel, 1.0);
+        // with fuel, thrust applies; without fuel, no thrust
         assert!(with_fuel.speed_y < without_fuel.speed_y);
     }
 
