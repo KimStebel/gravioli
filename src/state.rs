@@ -20,56 +20,61 @@ pub struct Rocket {
 
 pub struct Level {
     pub planets: Vec<Planet>,
-    pub rocket: Rocket,
-    pub start_time: f64,
-    initial_rocket: Rocket,
+    pub initial_rocket: Rocket,
 }
 
 impl Level {
     pub fn one() -> Self {
-        let rocket = Rocket {
-            x: 100.0,
-            y: screen_height() - 100.0,
-            speed_x: 120.0,
-            speed_y: 0.0,
-            orientation: 90.0,
-            landed: false,
-            engine_on: false,
-            fuel: 20.0,
-        };
         Self {
             planets: vec![Planet {
                 x: screen_width() / 2.0,
                 y: screen_height() / 2.0,
                 radius: 30.0,
             }],
-            initial_rocket: rocket.clone(),
-            rocket,
-            start_time: get_time(),
+            initial_rocket: Rocket {
+                x: 100.0,
+                y: screen_height() - 100.0,
+                speed_x: 120.0,
+                speed_y: 0.0,
+                orientation: 90.0,
+                landed: false,
+                engine_on: false,
+                fuel: 20.0,
+            },
         }
     }
 
     pub fn two() -> Self {
-        let rocket = Rocket {
-            x: screen_width() / 2.0,
-            y: screen_height() / 2.0,
-            speed_x: 0.0,
-            speed_y: 0.0,
-            orientation: 0.0,
-            landed: false,
-            engine_on: false,
-            fuel: 20.0,
-        };
         Self {
             planets: vec![],
-            initial_rocket: rocket.clone(),
-            rocket,
-            start_time: get_time(),
+            initial_rocket: Rocket {
+                x: screen_width() / 2.0,
+                y: screen_height() / 2.0,
+                speed_x: 0.0,
+                speed_y: 0.0,
+                orientation: 0.0,
+                landed: false,
+                engine_on: false,
+                fuel: 20.0,
+            },
         }
+    }
+}
+
+pub struct LevelState {
+    pub level: Level,
+    pub rocket: Rocket,
+    pub start_time: f64,
+}
+
+impl LevelState {
+    pub fn new(design: Level) -> Self {
+        let rocket = design.initial_rocket.clone();
+        Self { level: design, rocket, start_time: get_time() }
     }
 
     pub fn reset_rocket(&mut self) {
-        self.rocket = self.initial_rocket.clone();
+        self.rocket = self.level.initial_rocket.clone();
     }
 
     pub fn elapsed(&self) -> f64 {
@@ -78,14 +83,14 @@ impl Level {
 }
 
 pub struct GameState {
-    pub level: Level,
+    pub level: LevelState,
     pub show_hud: bool,
 }
 
 impl GameState {
     pub fn new() -> Self {
         Self {
-            level: Level::one(),
+            level: LevelState::new(Level::one()),
             show_hud: true,
         }
     }

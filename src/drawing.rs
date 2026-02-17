@@ -67,4 +67,5 @@ fn draw_hud(elapsed: f64, rocket: &Rocket) {
     draw_text(&format!("Speed: {:.0} px/s", speed), screen_width() - 200.0, screen_height() - 60.0, 24.0, WHITE);
     draw_text(&format!("Fuel: {:.1}s", rocket.fuel), screen_width() - 200.0, screen_height() - 40.0, 24.0, WHITE);
     draw_text(&format!("Accel: {:.1} px/s²", physics::engine_accel(rocket)), screen_width() - 200.0, screen_height() - 20.0, 24.0, WHITE);
+    draw_text(&format!("FPS: {}", get_fps()), screen_width() - 200.0, screen_height() - 100.0, 24.0, WHITE);
 }
