@@ -31,11 +31,7 @@ async fn main() {
         let dt = get_frame_time();
         controls::handle_input(&mut game.rocket, dt, &mut game.show_hud);
         sounds.update(&game.rocket);
-        physics::update_rocket_speed(&mut game.rocket, &game.planet, dt);
-        physics::move_rocket(&mut game.rocket, dt);
-        if physics::check_collision(&game.rocket, &game.planet) {
-            game.reset_rocket();
-        }
+        physics::update(&mut game, dt);
         drawing::draw(&game.planet, &game.rocket, &images, game.elapsed(), game.show_hud);
         next_frame().await;
     }

@@ -1,5 +1,13 @@
 use macroquad::prelude::*;
-use crate::state::{Planet, Rocket};
+use crate::state::{GameState, Planet, Rocket};
+
+pub fn update(game: &mut GameState, dt: f32) {
+    update_rocket_speed(&mut game.rocket, &game.planet, dt);
+    move_rocket(&mut game.rocket, dt);
+    if check_collision(&game.rocket, &game.planet) {
+        game.reset_rocket();
+    }
+}
 
 pub fn update_rocket_speed(rocket: &mut Rocket, planet: &Planet, dt: f32) {
     let dx = planet.x - rocket.x;
