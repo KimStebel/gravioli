@@ -6,6 +6,7 @@ pub struct Planet {
     pub radius: f32,
 }
 
+#[derive(Clone)]
 pub struct Rocket {
     pub x: f32,
     pub y: f32,
@@ -17,9 +18,16 @@ pub struct Rocket {
     pub fuel: f32, // seconds of engine burn remaining
 }
 
-impl Rocket {
-    fn initial() -> Self {
-        Self {
+pub struct Level {
+    pub planets: Vec<Planet>,
+    pub rocket: Rocket,
+    pub start_time: f64,
+    initial_rocket: Rocket,
+}
+
+impl Level {
+    pub fn one() -> Self {
+        let rocket = Rocket {
             x: 100.0,
             y: screen_height() - 100.0,
             speed_x: 120.0,
@@ -28,19 +36,40 @@ impl Rocket {
             landed: false,
             engine_on: false,
             fuel: 20.0,
+        };
+        Self {
+            planets: vec![Planet {
+                x: screen_width() / 2.0,
+                y: screen_height() / 2.0,
+                radius: 30.0,
+            }],
+            initial_rocket: rocket.clone(),
+            rocket,
+            start_time: get_time(),
         }
     }
-}
 
-pub struct Level {
-    pub planets: Vec<Planet>,
-    pub rocket: Rocket,
-    pub start_time: f64,
-}
+    pub fn two() -> Self {
+        let rocket = Rocket {
+            x: screen_width() / 2.0,
+            y: screen_height() / 2.0,
+            speed_x: 0.0,
+            speed_y: 0.0,
+            orientation: 0.0,
+            landed: false,
+            engine_on: false,
+            fuel: 20.0,
+        };
+        Self {
+            planets: vec![],
+            initial_rocket: rocket.clone(),
+            rocket,
+            start_time: get_time(),
+        }
+    }
 
-impl Level {
     pub fn reset_rocket(&mut self) {
-        self.rocket = Rocket::initial();
+        self.rocket = self.initial_rocket.clone();
     }
 
     pub fn elapsed(&self) -> f64 {
@@ -56,15 +85,7 @@ pub struct GameState {
 impl GameState {
     pub fn new() -> Self {
         Self {
-            level: Level {
-                planets: vec![Planet {
-                    x: screen_width() / 2.0,
-                    y: screen_height() / 2.0,
-                    radius: 30.0,
-                }],
-                rocket: Rocket::initial(),
-                start_time: get_time(),
-            },
+            level: Level::one(),
             show_hud: true,
         }
     }
