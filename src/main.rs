@@ -18,6 +18,7 @@ fn window_conf() -> Conf {
 
 #[macroquad::main(window_conf)]
 async fn main() {
+    info!("Starting Garlic");
     let images = images::Images::load().await;
     let mut sounds = sound::Sounds::load().await;
     sounds.start_music();
