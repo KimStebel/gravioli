@@ -32,32 +32,40 @@ impl Rocket {
     }
 }
 
-pub struct GameState {
+pub struct Level {
     pub planets: Vec<Planet>,
     pub rocket: Rocket,
-    pub show_hud: bool,
     pub start_time: f64,
 }
 
-impl GameState {
-    pub fn new() -> Self {
-        Self {
-            planets: vec![Planet {
-                x: screen_width() / 2.0,
-                y: screen_height() / 2.0,
-                radius: 30.0,
-            }],
-            rocket: Rocket::initial(),
-            show_hud: true,
-            start_time: get_time(),
-        }
-    }
-
+impl Level {
     pub fn reset_rocket(&mut self) {
         self.rocket = Rocket::initial();
     }
 
     pub fn elapsed(&self) -> f64 {
         get_time() - self.start_time
+    }
+}
+
+pub struct GameState {
+    pub level: Level,
+    pub show_hud: bool,
+}
+
+impl GameState {
+    pub fn new() -> Self {
+        Self {
+            level: Level {
+                planets: vec![Planet {
+                    x: screen_width() / 2.0,
+                    y: screen_height() / 2.0,
+                    radius: 30.0,
+                }],
+                rocket: Rocket::initial(),
+                start_time: get_time(),
+            },
+            show_hud: true,
+        }
     }
 }

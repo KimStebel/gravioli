@@ -2,12 +2,12 @@ use macroquad::prelude::*;
 use crate::state::{GameState, Planet, Rocket};
 
 pub fn update(game: &mut GameState, dt: f32) {
-    for planet in &game.planets {
-        update_rocket_speed(&mut game.rocket, planet, dt);
+    for planet in &game.level.planets {
+        update_rocket_speed(&mut game.level.rocket, planet, dt);
     }
-    move_rocket(&mut game.rocket, dt);
-    if game.planets.iter().any(|p| check_collision(&game.rocket, p)) {
-        game.reset_rocket();
+    move_rocket(&mut game.level.rocket, dt);
+    if game.level.planets.iter().any(|p| check_collision(&game.level.rocket, p)) {
+        game.level.reset_rocket();
     }
 }
 

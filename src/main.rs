@@ -29,10 +29,10 @@ async fn main() {
 
     loop {
         let dt = get_frame_time();
-        controls::handle_input(&mut game.rocket, dt, &mut game.show_hud);
-        sounds.update(&game.rocket);
+        controls::handle_input(&mut game.level.rocket, dt, &mut game.show_hud);
+        sounds.update(&game.level.rocket);
         physics::update(&mut game, dt);
-        drawing::draw(&game.planets, &game.rocket, &images, game.elapsed(), game.show_hud);
+        drawing::draw(&game.level.planets, &game.level.rocket, &images, game.level.elapsed(), game.show_hud);
         next_frame().await;
     }
 }
