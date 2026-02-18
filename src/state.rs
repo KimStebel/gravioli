@@ -109,6 +109,7 @@ impl LevelState {
 pub struct GameState {
     pub level: LevelState,
     pub show_hud: bool,
+    pub show_path: bool,
 }
 
 impl GameState {
@@ -116,6 +117,7 @@ impl GameState {
         Self {
             level: LevelState::new(level),
             show_hud: true,
+            show_path: true,
         }
     }
 }

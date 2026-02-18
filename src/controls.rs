@@ -1,7 +1,7 @@
 use macroquad::prelude::*;
 use crate::state::Rocket;
 
-pub fn handle_input(rocket: &mut Rocket, dt: f32, show_hud: &mut bool) -> bool {
+pub fn handle_input(rocket: &mut Rocket, dt: f32, show_hud: &mut bool, show_path: &mut bool) -> bool {
     if is_key_pressed(KeyCode::Escape) {
         return true;
     }
@@ -14,6 +14,9 @@ pub fn handle_input(rocket: &mut Rocket, dt: f32, show_hud: &mut bool) -> bool {
     }
     if is_key_pressed(KeyCode::H) {
         *show_hud = !*show_hud;
+    }
+    if is_key_pressed(KeyCode::P) {
+        *show_path = !*show_path;
     }
     false
 }

@@ -3,7 +3,7 @@ use crate::state::{Planet, Rocket, WinCondition};
 use crate::images::Images;
 use crate::physics;
 
-pub fn draw(planets: &[Planet], rocket: &Rocket, win_condition: &WinCondition, images: &Images, elapsed: f64, show_hud: bool) {
+pub fn draw(planets: &[Planet], rocket: &Rocket, win_condition: &WinCondition, images: &Images, elapsed: f64, show_hud: bool, show_path: bool) {
     clear_background(BLACK);
     draw_texture_ex(&images.bg_texture, 0.0, 0.0, WHITE, DrawTextureParams {
         dest_size: Some(Vec2::new(screen_width(), screen_height())),
@@ -13,7 +13,9 @@ pub fn draw(planets: &[Planet], rocket: &Rocket, win_condition: &WinCondition, i
     for planet in planets {
         draw_planet(planet, &images.planet_texture);
     }
-    draw_projected_path(rocket, planets);
+    if show_path {
+        draw_projected_path(rocket, planets);
+    }
     draw_rocket(rocket);
     if show_hud {
         draw_hud(elapsed, rocket, planets);
@@ -74,7 +76,7 @@ fn draw_rocket(rocket: &Rocket) {
 
 fn draw_projected_path(rocket: &Rocket, planets: &[Planet]) {
     let path = physics::project_path(rocket, planets, 5.0, 100);
-    for (x, y) in &path {
+    for (x, y) in path.iter().step_by(5) {
         draw_circle(*x, *y, 1.5, WHITE);
     }
 }

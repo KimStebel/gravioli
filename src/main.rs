@@ -50,7 +50,7 @@ async fn main() {
             Screen::Playing(game) => {
                 let dt = get_frame_time();
                 let mut return_to_menu = false;
-                if controls::handle_input(&mut game.level.rocket, dt, &mut game.show_hud) {
+                if controls::handle_input(&mut game.level.rocket, dt, &mut game.show_hud, &mut game.show_path) {
                     return_to_menu = true;
                 } else {
                     sounds.update(&game.level.rocket);
@@ -64,7 +64,7 @@ async fn main() {
                         }
                         None => {}
                     }
-                    drawing::draw(&game.level.level.planets, &game.level.rocket, &game.level.level.win_condition, &images, game.level.elapsed(), game.show_hud);
+                    drawing::draw(&game.level.level.planets, &game.level.rocket, &game.level.level.win_condition, &images, game.level.elapsed(), game.show_hud, game.show_path);
                 }
                 if return_to_menu {
                     screen = Screen::Menu;
