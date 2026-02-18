@@ -13,6 +13,7 @@ pub fn draw(planets: &[Planet], rocket: &Rocket, win_condition: &WinCondition, i
     for planet in planets {
         draw_planet(planet, &images.planet_texture);
     }
+    draw_projected_path(rocket, planets);
     draw_rocket(rocket);
     if show_hud {
         draw_hud(elapsed, rocket, planets);
@@ -21,7 +22,8 @@ pub fn draw(planets: &[Planet], rocket: &Rocket, win_condition: &WinCondition, i
 
 fn draw_win_condition(condition: &WinCondition) {
     match condition {
-        WinCondition::Circle { x, y, radius, .. } => {
+        WinCondition::Circle { x, y, radius, .. }
+        | WinCondition::CircleAnySpeed { x, y, radius } => {
             draw_circle_lines(*x, *y, *radius, 2.0, GREEN);
         }
     }
@@ -67,6 +69,13 @@ fn draw_rocket(rocket: &Rocket) {
         let fr = rotate(body_width / 3.0, 0.0);
         let ftip = rotate(0.0, flame_height);
         draw_triangle(fl.into(), fr.into(), ftip.into(), ORANGE);
+    }
+}
+
+fn draw_projected_path(rocket: &Rocket, planets: &[Planet]) {
+    let path = physics::project_path(rocket, planets, 5.0, 100);
+    for (x, y) in &path {
+        draw_circle(*x, *y, 1.5, WHITE);
     }
 }
 

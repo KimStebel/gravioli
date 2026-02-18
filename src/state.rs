@@ -22,6 +22,7 @@ pub struct Rocket {
 #[derive(Clone)]
 pub enum WinCondition {
     Circle { x: f32, y: f32, radius: f32, max_speed: f32 },
+    CircleAnySpeed { x: f32, y: f32, radius: f32 },
 }
 
 #[derive(Clone)]
@@ -52,11 +53,10 @@ impl Level {
                     engine_on: false,
                     fuel: 20.0,
                 },
-                win_condition: WinCondition::Circle {
+                win_condition: WinCondition::CircleAnySpeed {
                     x: screen_width() - 150.0,
                     y: 150.0,
                     radius: 50.0,
-                    max_speed: 2.0,
                 },
             },
             Self {

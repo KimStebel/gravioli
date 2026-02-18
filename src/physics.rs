@@ -31,6 +31,11 @@ fn check_win(rocket: &Rocket, condition: &WinCondition) -> bool {
             let speed = (rocket.speed_x * rocket.speed_x + rocket.speed_y * rocket.speed_y).sqrt();
             in_circle && speed < *max_speed && !rocket.engine_on
         }
+        WinCondition::CircleAnySpeed { x, y, radius } => {
+            let dx = rocket.x - x;
+            let dy = rocket.y - y;
+            dx * dx + dy * dy < radius * radius && !rocket.engine_on
+        }
     }
 }
 
@@ -71,6 +76,21 @@ pub fn apply_thrust(rocket: &mut Rocket, dt: f32) {
 pub fn move_rocket(rocket: &mut Rocket, dt: f32) {
     rocket.x += rocket.speed_x * dt;
     rocket.y += rocket.speed_y * dt;
+}
+
+pub fn project_path(rocket: &Rocket, planets: &[Planet], duration: f32, steps: usize) -> Vec<(f32, f32)> {
+    let dt = duration / steps as f32;
+    let mut sim = rocket.clone();
+    sim.engine_on = false;
+    let mut path = Vec::with_capacity(steps);
+    for _ in 0..steps {
+        for planet in planets {
+            apply_gravity(&mut sim, planet, dt);
+        }
+        move_rocket(&mut sim, dt);
+        path.push((sim.x, sim.y));
+    }
+    path
 }
 
 pub fn check_collision(rocket: &Rocket, planet: &Planet) -> bool {
