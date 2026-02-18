@@ -26,3 +26,7 @@ target
 /target
 
 local.data
+
+# Build artifacts
+build/
+gravioli-windows.zip
