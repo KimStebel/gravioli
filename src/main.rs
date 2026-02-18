@@ -10,7 +10,7 @@ mod state;
 
 fn window_conf() -> Conf {
     Conf {
-        window_title: "Garlic".to_owned(),
+        window_title: "Gravioli".to_owned(),
         window_width: 1920,
         window_height: 1080,
         ..Default::default()
@@ -25,7 +25,7 @@ enum Screen {
 
 #[macroquad::main(window_conf)]
 async fn main() {
-    info!("Starting Garlic");
+    info!("Starting Gravioli");
     let images = images::Images::load().await;
     let mut sounds = sound::Sounds::load().await;
     sounds.start_music();
