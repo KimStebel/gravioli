@@ -1,5 +1,5 @@
 use macroquad::prelude::*;
-use crate::state::{GameState, Orbit, Planet, PlanetDef, Rocket, WinCondition};
+use crate::state::{GameState, Planet, PlanetDef, Rocket, WinCondition};
 
 pub enum PhysicsEvent {
     Collision,
@@ -104,7 +104,7 @@ pub fn check_collision(rocket: &Rocket, planet: &Planet) -> bool {
 
 #[cfg(test)]
 mod tests {
-    use crate::state::Rocket;
+    use crate::state::{Orbit, Rocket};
     use super::*;
 
     fn make_rocket(x: f32, y: f32, speed_x: f32, speed_y: f32) -> Rocket {

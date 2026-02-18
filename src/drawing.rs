@@ -21,6 +21,9 @@ pub fn draw(planet_defs: &[PlanetDef], rocket: &Rocket, win_condition: &WinCondi
     if show_hud {
         draw_hud(elapsed, rocket, &planets);
     }
+    if elapsed < 5.0 {
+        draw_help_text(&win_condition.description(), elapsed);
+    }
 }
 
 fn draw_win_condition(condition: &WinCondition) {
@@ -98,4 +101,14 @@ fn draw_hud(elapsed: f64, rocket: &Rocket, planets: &[Planet]) {
     draw_text(&format!("Speed: {:.0} px/s", speed), x, screen_height() - 60.0, 24.0, WHITE);
     draw_text(&format!("Fuel: {:.1}s", rocket.fuel), x, screen_height() - 40.0, 24.0, WHITE);
     draw_text(&format!("Accel: {:.1} px/s²", physics::engine_accel(rocket)), x, screen_height() - 20.0, 24.0, WHITE);
+}
+
+fn draw_help_text(text: &str, elapsed: f64) {
+    let alpha = if elapsed > 4.0 { (5.0 - elapsed) as f32 } else { 1.0 };
+    let color = Color::new(1.0, 1.0, 1.0, alpha);
+    let font_size = 30.0;
+    let dimensions = measure_text(text, None, font_size as u16, 1.0);
+    let x = (screen_width() - dimensions.width) / 2.0;
+    let y = 50.0;
+    draw_text(text, x, y, font_size, color);
 }

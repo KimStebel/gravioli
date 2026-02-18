@@ -60,6 +60,19 @@ pub enum WinCondition {
     CircleAnySpeed { x: f32, y: f32, radius: f32 },
 }
 
+impl WinCondition {
+    pub fn description(&self) -> String {
+        match self {
+            WinCondition::Circle { max_speed, .. } => {
+                format!("Reach the green circle at under {:.0} px/s with engine off", max_speed)
+            }
+            WinCondition::CircleAnySpeed { .. } => {
+                "Reach the green circle with engine off".to_string()
+            }
+        }
+    }
+}
+
 #[derive(Clone)]
 pub struct Level {
     pub name: &'static str,
