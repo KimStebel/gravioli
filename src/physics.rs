@@ -45,7 +45,8 @@ fn apply_gravity(rocket: &mut Rocket, planet: &Planet, dt: f32) {
     let dy = planet.y - rocket.y;
     let dist_sq = dx * dx + dy * dy;
     let dist = dist_sq.sqrt();
-    let gravity = 4000000.0;
+    let r = planet.radius / 30.0;
+    let gravity = 4000000.0 * r * r * r;
     let accel = gravity / dist_sq;
     rocket.speed_x += (dx / dist) * accel * dt;
     rocket.speed_y += (dy / dist) * accel * dt;
@@ -201,6 +202,42 @@ mod tests {
         assert!(rocket.speed_x > 0.0);
         assert!(rocket.speed_y > 0.0);
         assert!((rocket.speed_x - rocket.speed_y).abs() < f32::EPSILON);
+    }
+
+    #[test]
+    fn larger_planet_stronger_gravity() {
+        let mut small = make_rocket(0.0, 0.0, 0.0, 0.0);
+        let mut large = make_rocket(0.0, 0.0, 0.0, 0.0);
+        let small_planet = Planet { x: 100.0, y: 0.0, radius: 15.0 };
+        let large_planet = Planet { x: 100.0, y: 0.0, radius: 30.0 };
+        apply_gravity(&mut small, &small_planet, 1.0);
+        apply_gravity(&mut large, &large_planet, 1.0);
+        assert!(large.speed_x > small.speed_x);
+    }
+
+    #[test]
+    fn gravity_proportional_to_radius_cubed() {
+        let mut r30 = make_rocket(0.0, 0.0, 0.0, 0.0);
+        let mut r60 = make_rocket(0.0, 0.0, 0.0, 0.0);
+        let p30 = Planet { x: 100.0, y: 0.0, radius: 30.0 };
+        let p60 = Planet { x: 100.0, y: 0.0, radius: 60.0 };
+        apply_gravity(&mut r30, &p30, 1.0);
+        apply_gravity(&mut r60, &p60, 1.0);
+        // ratio should be (60/30)^3 = 8
+        let ratio = r60.speed_x / r30.speed_x;
+        assert!((ratio - 8.0).abs() < 0.001);
+    }
+
+    #[test]
+    fn half_radius_one_eighth_gravity() {
+        let mut full = make_rocket(0.0, 0.0, 0.0, 0.0);
+        let mut half = make_rocket(0.0, 0.0, 0.0, 0.0);
+        let full_planet = Planet { x: 100.0, y: 0.0, radius: 30.0 };
+        let half_planet = Planet { x: 100.0, y: 0.0, radius: 15.0 };
+        apply_gravity(&mut full, &full_planet, 1.0);
+        apply_gravity(&mut half, &half_planet, 1.0);
+        let ratio = half.speed_x / full.speed_x;
+        assert!((ratio - 0.125).abs() < 0.001);
     }
 
     #[test]
