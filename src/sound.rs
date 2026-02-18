@@ -3,12 +3,13 @@ use crate::state::Rocket;
 use macroquad::prelude::*;
 
 pub struct Sounds {
-    pub motor_hum: Sound,
-    pub engine_fire: Sound,
-    pub explosion: Sound,
-    pub music: Sound,
-    pub music_volume: f32,
-    pub effect_volume: f32,
+    motor_hum: Sound,
+    engine_fire: Sound,
+    explosion: Sound,
+    level_complete: Sound,
+    music: Sound,
+    music_volume: f32,
+    effect_volume: f32,
     motor_playing: bool,
     engine_playing: bool,
 }
@@ -40,6 +41,7 @@ impl Sounds {
             motor_hum: load_sound(&format!("{sfx}/motor_hum.ogg")).await.unwrap(),
             engine_fire: load_sound(&format!("{sfx}/engine_fire.ogg")).await.unwrap(),
             explosion: load_sound(&format!("{sfx}/explosion.ogg")).await.unwrap(),
+            level_complete: load_sound(&format!("{sfx}/level_complete.aif")).await.unwrap(),
             music: load_sound("assets/music.ogg").await.unwrap(),
             music_volume,
             effect_volume,
@@ -50,6 +52,10 @@ impl Sounds {
 
     pub fn start_music(&self) {
         play_sound(&self.music, PlaySoundParams { looped: true, volume: self.music_volume });
+    }
+
+    pub fn play_level_complete(&self) {
+        play_sound(&self.level_complete, PlaySoundParams { looped: false, volume: self.effect_volume });
     }
 
     pub fn play_explosion(&self) {
