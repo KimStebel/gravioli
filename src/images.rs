@@ -13,7 +13,7 @@ impl Images {
             planet_textures.push(load_texture(&path).await.unwrap());
         }
         Self {
-            bg_texture: load_texture("assets/backgrounds/space_backdrop.png").await.unwrap(),
+            bg_texture: load_texture("assets/backgrounds/spr_stars01.png").await.unwrap(),
             planet_textures,
         }
     }
