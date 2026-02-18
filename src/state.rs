@@ -1,5 +1,6 @@
 use macroquad::prelude::*;
 
+#[derive(Clone)]
 pub struct Planet {
     pub x: f32,
     pub y: f32,
@@ -18,49 +19,53 @@ pub struct Rocket {
     pub fuel: f32, // seconds of engine burn remaining
 }
 
+#[derive(Clone)]
 pub struct Level {
+    pub name: &'static str,
     pub planets: Vec<Planet>,
     pub initial_rocket: Rocket,
 }
 
 impl Level {
-    pub fn one() -> Self {
-        Self {
-            planets: vec![Planet {
-                x: screen_width() / 2.0,
-                y: screen_height() / 2.0,
-                radius: 30.0,
-            }],
-            initial_rocket: Rocket {
-                x: 100.0,
-                y: screen_height() - 100.0,
-                speed_x: 120.0,
-                speed_y: 0.0,
-                orientation: 90.0,
-                landed: false,
-                engine_on: false,
-                fuel: 20.0,
+    pub fn all() -> Vec<Self> {
+        vec![
+            Self {
+                name: "Level 1",
+                planets: vec![Planet {
+                    x: screen_width() / 2.0,
+                    y: screen_height() / 2.0,
+                    radius: 30.0,
+                }],
+                initial_rocket: Rocket {
+                    x: 100.0,
+                    y: screen_height() - 100.0,
+                    speed_x: 120.0,
+                    speed_y: 0.0,
+                    orientation: 90.0,
+                    landed: false,
+                    engine_on: false,
+                    fuel: 20.0,
+                },
             },
-        }
-    }
-
-    pub fn two() -> Self {
-        Self {
-            planets: vec![],
-            initial_rocket: Rocket {
-                x: screen_width() / 2.0,
-                y: screen_height() / 2.0,
-                speed_x: 0.0,
-                speed_y: 0.0,
-                orientation: 0.0,
-                landed: false,
-                engine_on: false,
-                fuel: 20.0,
+            Self {
+                name: "Level 2",
+                planets: vec![],
+                initial_rocket: Rocket {
+                    x: screen_width() / 2.0,
+                    y: screen_height() / 2.0,
+                    speed_x: 0.0,
+                    speed_y: 0.0,
+                    orientation: 0.0,
+                    landed: false,
+                    engine_on: false,
+                    fuel: 20.0,
+                },
             },
-        }
+        ]
     }
 }
 
+#[derive(Clone)]
 pub struct LevelState {
     pub level: Level,
     pub rocket: Rocket,
@@ -82,6 +87,7 @@ impl LevelState {
     }
 }
 
+#[derive(Clone)]
 pub struct GameState {
     pub level: LevelState,
     pub show_hud: bool,

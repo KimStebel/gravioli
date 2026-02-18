@@ -1,24 +1,35 @@
 use macroquad::prelude::*;
+use crate::state::Level;
 
 pub enum MenuChoice {
     Play(usize),
     Exit,
 }
 
+#[derive(Clone)]
 pub struct Menu {
     selected: usize,
     options: Vec<&'static str>,
 }
 
 impl Menu {
-    pub fn new() -> Self {
-        Self {
-            selected: 0,
-            options: vec!["Level 1", "Level 2", "Exit"],
-        }
+    pub fn new(levels: &Vec<Level>) -> Self {
+        let level_names: Vec<&str> = levels.iter().map(|l| l.name).collect();
+
+        let mut options = level_names;
+        options.push("Exit");
+        Self { selected: 0, options }
     }
 
     pub fn update(&mut self) -> Option<MenuChoice> {
+        let choice = self.handle_input();
+        if choice.is_none() {
+            self.draw();
+        }
+        choice
+    }
+
+    fn handle_input(&mut self) -> Option<MenuChoice> {
         if is_key_pressed(KeyCode::Up) && self.selected > 0 {
             self.selected -= 1;
         }
@@ -28,7 +39,7 @@ impl Menu {
         if is_key_pressed(KeyCode::Enter) {
             return match self.selected {
                 i if i == self.options.len() - 1 => Some(MenuChoice::Exit),
-                i => Some(MenuChoice::Play(i + 1)),
+                i => Some(MenuChoice::Play(i)),
             };
         }
         None

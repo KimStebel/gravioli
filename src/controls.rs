@@ -1,7 +1,10 @@
 use macroquad::prelude::*;
 use crate::state::Rocket;
 
-pub fn handle_input(rocket: &mut Rocket, dt: f32, show_hud: &mut bool) {
+pub fn handle_input(rocket: &mut Rocket, dt: f32, show_hud: &mut bool) -> bool {
+    if is_key_pressed(KeyCode::Escape) {
+        return true;
+    }
     update_orientation(rocket, dt, is_key_down(KeyCode::A), is_key_down(KeyCode::D));
     if is_key_pressed(KeyCode::Z) && rocket.fuel > 0.0 {
         rocket.engine_on = true;
@@ -12,6 +15,7 @@ pub fn handle_input(rocket: &mut Rocket, dt: f32, show_hud: &mut bool) {
     if is_key_pressed(KeyCode::H) {
         *show_hud = !*show_hud;
     }
+    false
 }
 
 pub fn update_orientation(rocket: &mut Rocket, dt: f32, rotate_left: bool, rotate_right: bool) {

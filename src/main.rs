@@ -17,8 +17,9 @@ fn window_conf() -> Conf {
     }
 }
 
+#[derive(Clone)]
 enum Screen {
-    Menu(menu::Menu),
+    Menu,
     Playing(state::GameState),
 }
 
@@ -31,32 +32,30 @@ async fn main() {
     // these two are needed because the first frames are too long due to the asset loading
     next_frame().await;
     next_frame().await;
-    let mut screen = Screen::Menu(menu::Menu::new());
+    let levels = state::Level::all();
+    let mut menu = menu::Menu::new(&levels);
+    let mut screen = Screen::Menu;
 
     loop {
         match &mut screen {
-            Screen::Menu(menu) => {
-                if let Some(choice) = menu.update() {
-                    match choice {
-                        menu::MenuChoice::Play(1) => {
-                            screen = Screen::Playing(state::GameState::new(state::Level::one()));
-                        }
-                        menu::MenuChoice::Play(2) => {
-                            screen = Screen::Playing(state::GameState::new(state::Level::two()));
-                        }
-                        menu::MenuChoice::Exit => return,
-                        _ => {}
+            Screen::Menu => {
+                match menu.update() {
+                    Some(menu::MenuChoice::Play(i)) if i < levels.len() => {
+                        screen = Screen::Playing(state::GameState::new(levels[i].clone()));
                     }
-                } else {
-                    menu.draw();
+                    Some(menu::MenuChoice::Exit) => return,
+                    _ => {}
                 }
             }
             Screen::Playing(game) => {
                 let dt = get_frame_time();
-                controls::handle_input(&mut game.level.rocket, dt, &mut game.show_hud);
-                sounds.update(&game.level.rocket);
-                physics::update(game, dt);
-                drawing::draw(&game.level.level.planets, &game.level.rocket, &images, game.level.elapsed(), game.show_hud);
+                if controls::handle_input(&mut game.level.rocket, dt, &mut game.show_hud) {
+                    screen = Screen::Menu;
+                } else {
+                    sounds.update(&game.level.rocket);
+                    physics::update(game, dt);
+                    drawing::draw(&game.level.level.planets, &game.level.rocket, &images, game.level.elapsed(), game.show_hud);
+                }
             }
         }
         next_frame().await;
