@@ -21,6 +21,7 @@ fn window_conf() -> Conf {
 enum Screen {
     Menu,
     Playing(state::GameState),
+    Controls,
 }
 
 #[macroquad::main(window_conf)]
@@ -42,6 +43,9 @@ async fn main() {
                 match menu.update() {
                     Some(menu::MenuChoice::Play(i)) if i < levels.len() => {
                         screen = Screen::Playing(state::GameState::new(levels[i].clone()));
+                    }
+                    Some(menu::MenuChoice::Controls) => {
+                        screen = Screen::Controls;
                     }
                     Some(menu::MenuChoice::Exit) => return,
                     _ => {}
@@ -67,6 +71,12 @@ async fn main() {
                     drawing::draw(&game.level.level.planets, &game.level.rocket, &game.level.level.win_condition, &images, game.level.elapsed(), game.show_hud, game.show_path);
                 }
                 if return_to_menu {
+                    screen = Screen::Menu;
+                }
+            }
+            Screen::Controls => {
+                drawing::draw_controls();
+                if is_key_pressed(KeyCode::Escape) {
                     screen = Screen::Menu;
                 }
             }

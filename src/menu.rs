@@ -3,6 +3,7 @@ use crate::state::Level;
 
 pub enum MenuChoice {
     Play(usize),
+    Controls,
     Exit,
 }
 
@@ -17,6 +18,7 @@ impl Menu {
         let level_names: Vec<&str> = levels.iter().map(|l| l.name).collect();
 
         let mut options = level_names;
+        options.push("Controls");
         options.push("Exit");
         Self { selected: 0, options }
     }
@@ -37,8 +39,10 @@ impl Menu {
             self.selected += 1;
         }
         if is_key_pressed(KeyCode::Enter) {
+            let last = self.options.len() - 1;
             return match self.selected {
-                i if i == self.options.len() - 1 => Some(MenuChoice::Exit),
+                i if i == last => Some(MenuChoice::Exit),
+                i if i == last - 1 => Some(MenuChoice::Controls),
                 i => Some(MenuChoice::Play(i)),
             };
         }

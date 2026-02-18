@@ -103,6 +103,40 @@ fn draw_hud(elapsed: f64, rocket: &Rocket, planets: &[Planet]) {
     draw_text(&format!("Accel: {:.1} px/s²", physics::engine_accel(rocket)), x, screen_height() - 20.0, 24.0, WHITE);
 }
 
+pub fn draw_controls() {
+    clear_background(BLACK);
+    let title_size = 40.0;
+    let font_size = 28.0;
+    let line_height = 36.0;
+
+    let title = "Controls";
+    let dims = measure_text(title, None, title_size as u16, 1.0);
+    draw_text(title, (screen_width() - dims.width) / 2.0, 80.0, title_size, YELLOW);
+
+    let controls = [
+        ("A / D", "Rotate left / right"),
+        ("Z", "Engine on"),
+        ("X", "Engine off"),
+        ("H", "Toggle HUD"),
+        ("P", "Toggle trajectory path"),
+        ("Escape", "Back to menu"),
+    ];
+
+    let start_y = 150.0;
+    let key_x = screen_width() / 2.0 - 180.0;
+    let desc_x = screen_width() / 2.0 - 20.0;
+
+    for (i, (key, desc)) in controls.iter().enumerate() {
+        let y = start_y + i as f32 * line_height;
+        draw_text(key, key_x, y, font_size, WHITE);
+        draw_text(desc, desc_x, y, font_size, GRAY);
+    }
+
+    let footer = "Press Escape to return";
+    let dims = measure_text(footer, None, 24, 1.0);
+    draw_text(footer, (screen_width() - dims.width) / 2.0, screen_height() - 40.0, 24.0, GRAY);
+}
+
 fn draw_help_text(text: &str, elapsed: f64) {
     let alpha = if elapsed > 4.0 { (5.0 - elapsed) as f32 } else { 1.0 };
     let color = Color::new(1.0, 1.0, 1.0, alpha);
