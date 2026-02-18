@@ -1,5 +1,5 @@
 use macroquad::prelude::*;
-use crate::state::{GameState, Planet, Rocket, WinCondition};
+use crate::state::{GameState, Planet, PlanetDef, Rocket, WinCondition};
 
 pub enum PhysicsEvent {
     Collision,
@@ -7,12 +7,13 @@ pub enum PhysicsEvent {
 }
 
 pub fn update(game: &mut GameState, dt: f32) -> Option<PhysicsEvent> {
-    for planet in &game.level.level.planets {
+    let current_planets = game.level.current_planets();
+    for planet in &current_planets {
         apply_gravity(&mut game.level.rocket, planet, dt);
     }
     apply_engine(&mut game.level.rocket, dt);
     move_rocket(&mut game.level.rocket, dt);
-    if game.level.level.planets.iter().any(|p| check_collision(&game.level.rocket, p)) {
+    if current_planets.iter().any(|p| check_collision(&game.level.rocket, p)) {
         game.level.reset_rocket();
         return Some(PhysicsEvent::Collision);
     }
@@ -78,14 +79,16 @@ pub fn move_rocket(rocket: &mut Rocket, dt: f32) {
     rocket.y += rocket.speed_y * dt;
 }
 
-pub fn project_path(rocket: &Rocket, planets: &[Planet], duration: f32, steps: usize) -> Vec<(f32, f32)> {
+pub fn project_path(rocket: &Rocket, planet_defs: &[PlanetDef], duration: f32, steps: usize, start_time: f64) -> Vec<(f32, f32)> {
     let dt = duration / steps as f32;
     let mut sim = rocket.clone();
     sim.engine_on = false;
     let mut path = Vec::with_capacity(steps);
-    for _ in 0..steps {
-        for planet in planets {
-            apply_gravity(&mut sim, planet, dt);
+    for i in 0..steps {
+        let t = start_time + (i as f64 + 1.0) * dt as f64;
+        for def in planet_defs {
+            let planet = def.planet_at(t);
+            apply_gravity(&mut sim, &planet, dt);
         }
         move_rocket(&mut sim, dt);
         path.push((sim.x, sim.y));

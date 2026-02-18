@@ -8,6 +8,41 @@ pub struct Planet {
 }
 
 #[derive(Clone)]
+pub struct Orbit {
+    pub radius: f32,
+    pub speed: f32,         // radians per second
+    pub initial_angle: f32, // radians
+}
+
+#[derive(Clone)]
+pub struct PlanetDef {
+    pub center_x: f32,      // static position, or orbit center
+    pub center_y: f32,
+    pub radius: f32,        // planet body radius
+    pub orbit: Option<Orbit>,
+}
+
+impl PlanetDef {
+    pub fn planet_at(&self, time: f64) -> Planet {
+        match &self.orbit {
+            None => Planet {
+                x: self.center_x,
+                y: self.center_y,
+                radius: self.radius,
+            },
+            Some(orbit) => {
+                let angle = orbit.initial_angle + orbit.speed * time as f32;
+                Planet {
+                    x: self.center_x + orbit.radius * angle.cos(),
+                    y: self.center_y + orbit.radius * angle.sin(),
+                    radius: self.radius,
+                }
+            }
+        }
+    }
+}
+
+#[derive(Clone)]
 pub struct Rocket {
     pub x: f32,
     pub y: f32,
@@ -28,7 +63,7 @@ pub enum WinCondition {
 #[derive(Clone)]
 pub struct Level {
     pub name: &'static str,
-    pub planets: Vec<Planet>,
+    pub planets: Vec<PlanetDef>,
     pub initial_rocket: Rocket,
     pub win_condition: WinCondition,
 }
@@ -38,11 +73,24 @@ impl Level {
         vec![
             Self {
                 name: "Level 1",
-                planets: vec![Planet {
-                    x: screen_width() / 2.0,
-                    y: screen_height() / 2.0,
-                    radius: 30.0,
-                }],
+                planets: vec![
+                    PlanetDef {
+                        center_x: screen_width() / 2.0,
+                        center_y: screen_height() / 2.0,
+                        radius: 30.0,
+                        orbit: None,
+                    },
+                    PlanetDef {
+                        center_x: screen_width() / 2.0,
+                        center_y: screen_height() / 2.0,
+                        radius: 15.0,
+                        orbit: Some(Orbit {
+                            radius: 150.0,
+                            speed: 0.5,
+                            initial_angle: 0.0,
+                        }),
+                    },
+                ],
                 initial_rocket: Rocket {
                     x: 100.0,
                     y: screen_height() - 100.0,
@@ -102,6 +150,11 @@ impl LevelState {
 
     pub fn elapsed(&self) -> f64 {
         get_time() - self.start_time
+    }
+
+    pub fn current_planets(&self) -> Vec<Planet> {
+        let elapsed = self.elapsed();
+        self.level.planets.iter().map(|p| p.planet_at(elapsed)).collect()
     }
 }
 

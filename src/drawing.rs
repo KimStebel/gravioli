@@ -1,24 +1,25 @@
 use macroquad::prelude::*;
-use crate::state::{Planet, Rocket, WinCondition};
+use crate::state::{Planet, PlanetDef, Rocket, WinCondition};
 use crate::images::Images;
 use crate::physics;
 
-pub fn draw(planets: &[Planet], rocket: &Rocket, win_condition: &WinCondition, images: &Images, elapsed: f64, show_hud: bool, show_path: bool) {
+pub fn draw(planet_defs: &[PlanetDef], rocket: &Rocket, win_condition: &WinCondition, images: &Images, elapsed: f64, show_hud: bool, show_path: bool) {
+    let planets: Vec<_> = planet_defs.iter().map(|p| p.planet_at(elapsed)).collect();
     clear_background(BLACK);
     draw_texture_ex(&images.bg_texture, 0.0, 0.0, WHITE, DrawTextureParams {
         dest_size: Some(Vec2::new(screen_width(), screen_height())),
         ..Default::default()
     });
     draw_win_condition(win_condition);
-    for planet in planets {
+    for planet in &planets {
         draw_planet(planet, &images.planet_texture);
     }
     if show_path {
-        draw_projected_path(rocket, planets);
+        draw_projected_path(rocket, planet_defs, elapsed);
     }
     draw_rocket(rocket);
     if show_hud {
-        draw_hud(elapsed, rocket, planets);
+        draw_hud(elapsed, rocket, &planets);
     }
 }
 
@@ -74,9 +75,9 @@ fn draw_rocket(rocket: &Rocket) {
     }
 }
 
-fn draw_projected_path(rocket: &Rocket, planets: &[Planet]) {
-    let path = physics::project_path(rocket, planets, 5.0, 100);
-    for (x, y) in path.iter().step_by(5) {
+fn draw_projected_path(rocket: &Rocket, planet_defs: &[PlanetDef], elapsed: f64) {
+    let path = physics::project_path(rocket, planet_defs, 5.0, 300, elapsed);
+    for (x, y) in path.iter().step_by(15) {
         draw_circle(*x, *y, 1.5, WHITE);
     }
 }
