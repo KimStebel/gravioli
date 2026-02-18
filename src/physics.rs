@@ -29,7 +29,7 @@ fn check_win(rocket: &Rocket, condition: &WinCondition) -> bool {
             let dy = rocket.y - y;
             let in_circle = dx * dx + dy * dy < radius * radius;
             let speed = (rocket.speed_x * rocket.speed_x + rocket.speed_y * rocket.speed_y).sqrt();
-            in_circle && speed < *max_speed
+            in_circle && speed < *max_speed && !rocket.engine_on
         }
     }
 }
