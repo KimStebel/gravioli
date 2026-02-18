@@ -1,5 +1,5 @@
 use macroquad::prelude::*;
-use crate::state::{GameState, Planet, PlanetDef, Rocket, WinCondition};
+use crate::state::{GameState, Orbit, Planet, PlanetDef, Rocket, WinCondition};
 
 pub enum PhysicsEvent {
     Collision,
@@ -299,5 +299,150 @@ mod tests {
         let rocket = make_rocket(129.0, 100.0, 0.0, 0.0);
         let planet = make_planet(100.0, 100.0);
         assert!(check_collision(&rocket, &planet));
+    }
+
+    // --- engine_accel tests ---
+
+    #[test]
+    fn engine_accel_full_fuel() {
+        let rocket = make_rocket(0.0, 0.0, 0.0, 0.0);
+        // mass = 0.5 + 0.5 * (20/20) = 1.0, accel = 10/1 = 10
+        assert!((engine_accel(&rocket) - 10.0).abs() < f32::EPSILON);
+    }
+
+    #[test]
+    fn engine_accel_empty_fuel() {
+        let mut rocket = make_rocket(0.0, 0.0, 0.0, 0.0);
+        rocket.fuel = 0.0;
+        // mass = 0.5 + 0.5 * 0 = 0.5, accel = 10/0.5 = 20
+        assert!((engine_accel(&rocket) - 20.0).abs() < f32::EPSILON);
+    }
+
+    #[test]
+    fn engine_accel_half_fuel() {
+        let mut rocket = make_rocket(0.0, 0.0, 0.0, 0.0);
+        rocket.fuel = 10.0;
+        // mass = 0.5 + 0.5 * (10/20) = 0.75, accel = 10/0.75
+        let expected = 10.0 / 0.75;
+        assert!((engine_accel(&rocket) - expected).abs() < 0.001);
+    }
+
+    // --- check_win tests ---
+
+    #[test]
+    fn win_circle_inside_slow_engine_off() {
+        let rocket = make_rocket(100.0, 100.0, 1.0, 0.0);
+        let condition = WinCondition::Circle { x: 100.0, y: 100.0, radius: 50.0, max_speed: 2.0 };
+        assert!(check_win(&rocket, &condition));
+    }
+
+    #[test]
+    fn no_win_circle_too_fast() {
+        let rocket = make_rocket(100.0, 100.0, 3.0, 0.0);
+        let condition = WinCondition::Circle { x: 100.0, y: 100.0, radius: 50.0, max_speed: 2.0 };
+        assert!(!check_win(&rocket, &condition));
+    }
+
+    #[test]
+    fn no_win_circle_engine_on() {
+        let mut rocket = make_rocket(100.0, 100.0, 1.0, 0.0);
+        rocket.engine_on = true;
+        let condition = WinCondition::Circle { x: 100.0, y: 100.0, radius: 50.0, max_speed: 2.0 };
+        assert!(!check_win(&rocket, &condition));
+    }
+
+    #[test]
+    fn no_win_circle_outside() {
+        let rocket = make_rocket(200.0, 200.0, 0.0, 0.0);
+        let condition = WinCondition::Circle { x: 100.0, y: 100.0, radius: 50.0, max_speed: 2.0 };
+        assert!(!check_win(&rocket, &condition));
+    }
+
+    #[test]
+    fn win_circle_any_speed_inside_engine_off() {
+        let rocket = make_rocket(100.0, 100.0, 999.0, 999.0);
+        let condition = WinCondition::CircleAnySpeed { x: 100.0, y: 100.0, radius: 50.0 };
+        assert!(check_win(&rocket, &condition));
+    }
+
+    #[test]
+    fn no_win_circle_any_speed_engine_on() {
+        let mut rocket = make_rocket(100.0, 100.0, 0.0, 0.0);
+        rocket.engine_on = true;
+        let condition = WinCondition::CircleAnySpeed { x: 100.0, y: 100.0, radius: 50.0 };
+        assert!(!check_win(&rocket, &condition));
+    }
+
+    #[test]
+    fn no_win_circle_any_speed_outside() {
+        let rocket = make_rocket(200.0, 200.0, 0.0, 0.0);
+        let condition = WinCondition::CircleAnySpeed { x: 100.0, y: 100.0, radius: 50.0 };
+        assert!(!check_win(&rocket, &condition));
+    }
+
+    // --- project_path tests ---
+
+    fn make_static_planet_def(x: f32, y: f32, radius: f32) -> PlanetDef {
+        PlanetDef { center_x: x, center_y: y, radius, orbit: None }
+    }
+
+    #[test]
+    fn project_path_no_planets_straight_line() {
+        let rocket = make_rocket(0.0, 0.0, 100.0, 0.0);
+        let path = project_path(&rocket, &[], 1.0, 10, 0.0);
+        assert_eq!(path.len(), 10);
+        // should move right in a straight line
+        for i in 1..path.len() {
+            assert!(path[i].0 > path[i - 1].0);
+            assert!((path[i].1).abs() < f32::EPSILON);
+        }
+    }
+
+    #[test]
+    fn project_path_returns_correct_count() {
+        let rocket = make_rocket(0.0, 0.0, 10.0, 0.0);
+        let path = project_path(&rocket, &[], 2.0, 50, 0.0);
+        assert_eq!(path.len(), 50);
+    }
+
+    #[test]
+    fn project_path_static_planet_curves_trajectory() {
+        let rocket = make_rocket(0.0, 0.0, 100.0, 0.0);
+        let planets = vec![make_static_planet_def(0.0, 200.0, 10.0)];
+        let path = project_path(&rocket, &planets, 2.0, 100, 0.0);
+        // planet is below, so rocket should curve downward (positive y)
+        let last = path.last().unwrap();
+        assert!(last.1 > 0.0);
+    }
+
+    #[test]
+    fn project_path_orbiting_planet_differs_from_static() {
+        let rocket = make_rocket(0.0, 0.0, 100.0, 0.0);
+        let static_planets = vec![make_static_planet_def(0.0, 200.0, 10.0)];
+        let orbiting_planets = vec![PlanetDef {
+            center_x: 0.0,
+            center_y: 200.0,
+            radius: 10.0,
+            orbit: Some(Orbit { radius: 100.0, speed: 2.0, initial_angle: 0.0 }),
+        }];
+        let static_path = project_path(&rocket, &static_planets, 2.0, 100, 0.0);
+        let orbiting_path = project_path(&rocket, &orbiting_planets, 2.0, 100, 0.0);
+        // paths should diverge since the orbiting planet moves
+        let last_static = static_path.last().unwrap();
+        let last_orbit = orbiting_path.last().unwrap();
+        let dx = last_static.0 - last_orbit.0;
+        let dy = last_static.1 - last_orbit.1;
+        assert!(dx * dx + dy * dy > 1.0);
+    }
+
+    #[test]
+    fn project_path_disables_engine() {
+        let mut rocket = make_rocket(0.0, 0.0, 100.0, 0.0);
+        rocket.engine_on = true;
+        let path = project_path(&rocket, &[], 1.0, 10, 0.0);
+        // with engine disabled, should move in straight line (no thrust)
+        for i in 1..path.len() {
+            assert!((path[i].1).abs() < f32::EPSILON);
+        }
     }
 }
