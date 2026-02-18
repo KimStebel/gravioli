@@ -153,7 +153,7 @@ mod tests {
     }
 
     fn make_planet(x: f32, y: f32) -> Planet {
-        Planet { x, y, radius: 30.0 }
+        Planet { x, y, radius: 30.0, image: 0 }
     }
 
     #[test]
@@ -208,8 +208,8 @@ mod tests {
     fn larger_planet_stronger_gravity() {
         let mut small = make_rocket(0.0, 0.0, 0.0, 0.0);
         let mut large = make_rocket(0.0, 0.0, 0.0, 0.0);
-        let small_planet = Planet { x: 100.0, y: 0.0, radius: 15.0 };
-        let large_planet = Planet { x: 100.0, y: 0.0, radius: 30.0 };
+        let small_planet = Planet { x: 100.0, y: 0.0, radius: 15.0, image: 0 };
+        let large_planet = Planet { x: 100.0, y: 0.0, radius: 30.0, image: 0 };
         apply_gravity(&mut small, &small_planet, 1.0);
         apply_gravity(&mut large, &large_planet, 1.0);
         assert!(large.speed_x > small.speed_x);
@@ -219,8 +219,8 @@ mod tests {
     fn gravity_proportional_to_radius_cubed() {
         let mut r30 = make_rocket(0.0, 0.0, 0.0, 0.0);
         let mut r60 = make_rocket(0.0, 0.0, 0.0, 0.0);
-        let p30 = Planet { x: 100.0, y: 0.0, radius: 30.0 };
-        let p60 = Planet { x: 100.0, y: 0.0, radius: 60.0 };
+        let p30 = Planet { x: 100.0, y: 0.0, radius: 30.0, image: 0 };
+        let p60 = Planet { x: 100.0, y: 0.0, radius: 60.0, image: 0 };
         apply_gravity(&mut r30, &p30, 1.0);
         apply_gravity(&mut r60, &p60, 1.0);
         // ratio should be (60/30)^3 = 8
@@ -232,8 +232,8 @@ mod tests {
     fn half_radius_one_eighth_gravity() {
         let mut full = make_rocket(0.0, 0.0, 0.0, 0.0);
         let mut half = make_rocket(0.0, 0.0, 0.0, 0.0);
-        let full_planet = Planet { x: 100.0, y: 0.0, radius: 30.0 };
-        let half_planet = Planet { x: 100.0, y: 0.0, radius: 15.0 };
+        let full_planet = Planet { x: 100.0, y: 0.0, radius: 30.0, image: 0 };
+        let half_planet = Planet { x: 100.0, y: 0.0, radius: 15.0, image: 0 };
         apply_gravity(&mut full, &full_planet, 1.0);
         apply_gravity(&mut half, &half_planet, 1.0);
         let ratio = half.speed_x / full.speed_x;
@@ -420,7 +420,7 @@ mod tests {
     // --- project_path tests ---
 
     fn make_static_planet_def(x: f32, y: f32, radius: f32) -> PlanetDef {
-        PlanetDef { center_x: x, center_y: y, radius, orbit: None }
+        PlanetDef { center_x: x, center_y: y, radius, image: 0, orbit: None }
     }
 
     #[test]
@@ -460,6 +460,7 @@ mod tests {
             center_x: 0.0,
             center_y: 200.0,
             radius: 10.0,
+            image: 0,
             orbit: Some(Orbit { radius: 100.0, speed: 2.0, initial_angle: 0.0 }),
         }];
         let static_path = project_path(&rocket, &static_planets, 2.0, 100, 0.0);

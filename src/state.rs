@@ -5,6 +5,7 @@ pub struct Planet {
     pub x: f32,
     pub y: f32,
     pub radius: f32,
+    pub image: usize,
 }
 
 #[derive(Clone)]
@@ -19,6 +20,7 @@ pub struct PlanetDef {
     pub center_x: f32,      // static position, or orbit center
     pub center_y: f32,
     pub radius: f32,        // planet body radius
+    pub image: usize,       // index into planet_textures (0-9)
     pub orbit: Option<Orbit>,
 }
 
@@ -29,6 +31,7 @@ impl PlanetDef {
                 x: self.center_x,
                 y: self.center_y,
                 radius: self.radius,
+                image: self.image,
             },
             Some(orbit) => {
                 let angle = orbit.initial_angle + orbit.speed * time as f32;
@@ -36,6 +39,7 @@ impl PlanetDef {
                     x: self.center_x + orbit.radius * angle.cos(),
                     y: self.center_y + orbit.radius * angle.sin(),
                     radius: self.radius,
+                    image: self.image,
                 }
             }
         }
@@ -91,12 +95,14 @@ impl Level {
                         center_x: screen_width() / 2.0,
                         center_y: screen_height() / 2.0,
                         radius: 30.0,
+                        image: 5,
                         orbit: None,
                     },
                     PlanetDef {
                         center_x: screen_width() / 2.0,
                         center_y: screen_height() / 2.0,
                         radius: 15.0,
+                        image: 3,
                         orbit: Some(Orbit {
                             radius: 150.0,
                             speed: 0.5,
@@ -148,18 +154,21 @@ impl Level {
                         center_x: screen_width() / 2.0,
                         center_y: screen_height() / 2.0 - 120.0,
                         radius: 45.0,
+                        image: 7,
                         orbit: None,
                     },
                     PlanetDef {
                         center_x: screen_width() / 2.0,
                         center_y: screen_height() / 2.0 + 120.0,
                         radius: 45.0,
+                        image: 7,
                         orbit: None,
                     },
                     PlanetDef {
                         center_x: screen_width() * 0.8,
                         center_y: screen_height() / 2.0,
                         radius: 20.0,
+                        image: 2,
                         orbit: None,
                     },
                 ],
@@ -187,6 +196,7 @@ impl Level {
                         center_x: screen_width() / 2.0,
                         center_y: screen_height() / 2.0,
                         radius: 35.0,
+                        image: 1,
                         orbit: Some(Orbit {
                             radius: 120.0,
                             speed: 0.8,
@@ -197,6 +207,7 @@ impl Level {
                         center_x: screen_width() / 2.0,
                         center_y: screen_height() / 2.0,
                         radius: 35.0,
+                        image: 9,
                         orbit: Some(Orbit {
                             radius: 120.0,
                             speed: 0.8,
@@ -229,12 +240,14 @@ impl Level {
                         center_x: screen_width() * 0.35,
                         center_y: screen_height() / 2.0,
                         radius: 50.0,
+                        image: 0,
                         orbit: None,
                     },
                     PlanetDef {
                         center_x: screen_width() * 0.35,
                         center_y: screen_height() / 2.0,
                         radius: 12.0,
+                        image: 4,
                         orbit: Some(Orbit {
                             radius: 180.0,
                             speed: -1.2,

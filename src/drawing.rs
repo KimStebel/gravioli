@@ -12,7 +12,7 @@ pub fn draw(planet_defs: &[PlanetDef], rocket: &Rocket, win_condition: &WinCondi
     });
     draw_win_condition(win_condition);
     for planet in &planets {
-        draw_planet(planet, &images.planet_texture);
+        draw_planet(planet, &images.planet_textures[planet.image]);
     }
     if show_path {
         draw_projected_path(rocket, planet_defs, elapsed);
