@@ -20,10 +20,16 @@ pub struct Rocket {
 }
 
 #[derive(Clone)]
+pub enum WinCondition {
+    Circle { x: f32, y: f32, radius: f32, max_speed: f32 },
+}
+
+#[derive(Clone)]
 pub struct Level {
     pub name: &'static str,
     pub planets: Vec<Planet>,
     pub initial_rocket: Rocket,
+    pub win_condition: WinCondition,
 }
 
 impl Level {
@@ -46,6 +52,12 @@ impl Level {
                     engine_on: false,
                     fuel: 20.0,
                 },
+                win_condition: WinCondition::Circle {
+                    x: screen_width() - 150.0,
+                    y: 150.0,
+                    radius: 50.0,
+                    max_speed: 2.0,
+                },
             },
             Self {
                 name: "Level 2",
@@ -59,6 +71,12 @@ impl Level {
                     landed: false,
                     engine_on: false,
                     fuel: 20.0,
+                },
+                win_condition: WinCondition::Circle {
+                    x: screen_width() - 150.0,
+                    y: 150.0,
+                    radius: 50.0,
+                    max_speed: 2.0,
                 },
             },
         ]

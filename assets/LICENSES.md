@@ -30,9 +30,9 @@
 - License: CC0 1.0 Universal (Public Domain)
 - https://creativecommons.org/publicdomain/zero/1.0/
 
-## level_complete.aif
+## level_complete.wav
 
-- Title: Level up, power up, Coin get (Rise05.aif)
+- Title: Level up, power up, Coin get (Rise05.aif, converted to WAV)
 - Author: wobbleboxx
 - Source: https://opengameart.org/content/level-up-power-up-coin-get-13-sounds
 - License: CC0 1.0 Universal (Public Domain)

@@ -1,8 +1,9 @@
 use macroquad::prelude::*;
-use crate::state::{GameState, Planet, Rocket};
+use crate::state::{GameState, Planet, Rocket, WinCondition};
 
 pub enum PhysicsEvent {
     Collision,
+    Win,
 }
 
 pub fn update(game: &mut GameState, dt: f32) -> Option<PhysicsEvent> {
@@ -15,7 +16,22 @@ pub fn update(game: &mut GameState, dt: f32) -> Option<PhysicsEvent> {
         game.level.reset_rocket();
         return Some(PhysicsEvent::Collision);
     }
+    if check_win(&game.level.rocket, &game.level.level.win_condition) {
+        return Some(PhysicsEvent::Win);
+    }
     None
+}
+
+fn check_win(rocket: &Rocket, condition: &WinCondition) -> bool {
+    match condition {
+        WinCondition::Circle { x, y, radius, max_speed } => {
+            let dx = rocket.x - x;
+            let dy = rocket.y - y;
+            let in_circle = dx * dx + dy * dy < radius * radius;
+            let speed = (rocket.speed_x * rocket.speed_x + rocket.speed_y * rocket.speed_y).sqrt();
+            in_circle && speed < *max_speed
+        }
+    }
 }
 
 fn apply_gravity(rocket: &mut Rocket, planet: &Planet, dt: f32) {

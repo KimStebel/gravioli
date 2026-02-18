@@ -49,14 +49,25 @@ async fn main() {
             }
             Screen::Playing(game) => {
                 let dt = get_frame_time();
+                let mut return_to_menu = false;
                 if controls::handle_input(&mut game.level.rocket, dt, &mut game.show_hud) {
-                    screen = Screen::Menu;
+                    return_to_menu = true;
                 } else {
                     sounds.update(&game.level.rocket);
-                    if let Some(physics::PhysicsEvent::Collision) = physics::update(game, dt) {
-                        sounds.play_explosion();
+                    match physics::update(game, dt) {
+                        Some(physics::PhysicsEvent::Collision) => {
+                            sounds.play_explosion();
+                        }
+                        Some(physics::PhysicsEvent::Win) => {
+                            sounds.play_level_complete();
+                            return_to_menu = true;
+                        }
+                        None => {}
                     }
-                    drawing::draw(&game.level.level.planets, &game.level.rocket, &images, game.level.elapsed(), game.show_hud);
+                    drawing::draw(&game.level.level.planets, &game.level.rocket, &game.level.level.win_condition, &images, game.level.elapsed(), game.show_hud);
+                }
+                if return_to_menu {
+                    screen = Screen::Menu;
                 }
             }
         }

@@ -41,7 +41,7 @@ impl Sounds {
             motor_hum: load_sound(&format!("{sfx}/motor_hum.ogg")).await.unwrap(),
             engine_fire: load_sound(&format!("{sfx}/engine_fire.ogg")).await.unwrap(),
             explosion: load_sound(&format!("{sfx}/explosion.ogg")).await.unwrap(),
-            level_complete: load_sound(&format!("{sfx}/level_complete.aif")).await.unwrap(),
+            level_complete: load_sound(&format!("{sfx}/level_complete.wav")).await.unwrap(),
             music: load_sound("assets/music.ogg").await.unwrap(),
             music_volume,
             effect_volume,

@@ -1,20 +1,29 @@
 use macroquad::prelude::*;
-use crate::state::{Planet, Rocket};
+use crate::state::{Planet, Rocket, WinCondition};
 use crate::images::Images;
 use crate::physics;
 
-pub fn draw(planets: &[Planet], rocket: &Rocket, images: &Images, elapsed: f64, show_hud: bool) {
+pub fn draw(planets: &[Planet], rocket: &Rocket, win_condition: &WinCondition, images: &Images, elapsed: f64, show_hud: bool) {
     clear_background(BLACK);
     draw_texture_ex(&images.bg_texture, 0.0, 0.0, WHITE, DrawTextureParams {
         dest_size: Some(Vec2::new(screen_width(), screen_height())),
         ..Default::default()
     });
+    draw_win_condition(win_condition);
     for planet in planets {
         draw_planet(planet, &images.planet_texture);
     }
     draw_rocket(rocket);
     if show_hud {
         draw_hud(elapsed, rocket, planets);
+    }
+}
+
+fn draw_win_condition(condition: &WinCondition) {
+    match condition {
+        WinCondition::Circle { x, y, radius, .. } => {
+            draw_circle_lines(*x, *y, *radius, 2.0, GREEN);
+        }
     }
 }
 
