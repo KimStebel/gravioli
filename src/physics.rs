@@ -1,7 +1,11 @@
 use macroquad::prelude::*;
 use crate::state::{GameState, Planet, Rocket};
 
-pub fn update(game: &mut GameState, dt: f32) {
+pub enum PhysicsEvent {
+    Collision,
+}
+
+pub fn update(game: &mut GameState, dt: f32) -> Option<PhysicsEvent> {
     for planet in &game.level.level.planets {
         apply_gravity(&mut game.level.rocket, planet, dt);
     }
@@ -9,7 +13,9 @@ pub fn update(game: &mut GameState, dt: f32) {
     move_rocket(&mut game.level.rocket, dt);
     if game.level.level.planets.iter().any(|p| check_collision(&game.level.rocket, p)) {
         game.level.reset_rocket();
+        return Some(PhysicsEvent::Collision);
     }
+    None
 }
 
 fn apply_gravity(rocket: &mut Rocket, planet: &Planet, dt: f32) {

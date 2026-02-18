@@ -5,6 +5,7 @@ use macroquad::prelude::*;
 pub struct Sounds {
     pub motor_hum: Sound,
     pub engine_fire: Sound,
+    pub explosion: Sound,
     pub music: Sound,
     pub music_volume: f32,
     pub effect_volume: f32,
@@ -34,9 +35,11 @@ impl Sounds {
 
         drop(storage);
 
+        let sfx = "assets/sounds";
         Self {
-            motor_hum: load_sound("assets/motor_hum.ogg").await.unwrap(),
-            engine_fire: load_sound("assets/engine_fire.ogg").await.unwrap(),
+            motor_hum: load_sound(&format!("{sfx}/motor_hum.ogg")).await.unwrap(),
+            engine_fire: load_sound(&format!("{sfx}/engine_fire.ogg")).await.unwrap(),
+            explosion: load_sound(&format!("{sfx}/explosion.ogg")).await.unwrap(),
             music: load_sound("assets/music.ogg").await.unwrap(),
             music_volume,
             effect_volume,
@@ -47,6 +50,10 @@ impl Sounds {
 
     pub fn start_music(&self) {
         play_sound(&self.music, PlaySoundParams { looped: true, volume: self.music_volume });
+    }
+
+    pub fn play_explosion(&self) {
+        play_sound(&self.explosion, PlaySoundParams { looped: false, volume: self.effect_volume });
     }
 
     pub fn update(&mut self, rocket: &Rocket) {

@@ -22,6 +22,14 @@
 - License: CC0 1.0 Universal (Public Domain)
 - https://creativecommons.org/publicdomain/zero/1.0/
 
+## explosion.ogg
+
+- Title: Sound Effects Pack 2 (Explosion 7)
+- Author: phoenix1291 (SwissArcadeGameEntertainment)
+- Source: https://opengameart.org/content/sound-effects-pack-2
+- License: CC0 1.0 Universal (Public Domain)
+- https://creativecommons.org/publicdomain/zero/1.0/
+
 ## planets/
 
 - Title: Planets

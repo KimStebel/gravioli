@@ -53,7 +53,9 @@ async fn main() {
                     screen = Screen::Menu;
                 } else {
                     sounds.update(&game.level.rocket);
-                    physics::update(game, dt);
+                    if let Some(physics::PhysicsEvent::Collision) = physics::update(game, dt) {
+                        sounds.play_explosion();
+                    }
                     drawing::draw(&game.level.level.planets, &game.level.rocket, &images, game.level.elapsed(), game.show_hud);
                 }
             }
