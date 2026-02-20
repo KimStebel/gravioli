@@ -18,6 +18,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   aggregate \
   jq \
   vim \
+  bash-completion \
   libasound2-dev \
   pkg-config \
   && apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -47,6 +48,8 @@ ENV NPM_CONFIG_PREFIX=/usr/local/share/npm-global
 ENV PATH=$PATH:/usr/local/share/npm-global/bin
 
 ENV SHELL=/bin/bash
+ENV TERM=xterm-256color
+ENV BASH_ENV=/usr/share/bash-completion/bash_completion
 
 # Set the default editor and visual
 ENV EDITOR=vi
