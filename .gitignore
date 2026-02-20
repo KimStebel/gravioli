@@ -33,3 +33,6 @@ gravioli-windows.zip
 
 # Environment variables
 .env
+
+# Claude Code
+.claude/
