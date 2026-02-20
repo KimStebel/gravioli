@@ -30,3 +30,6 @@ local.data
 # Build artifacts
 build/
 gravioli-windows.zip
+
+# Environment variables
+.env

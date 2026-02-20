@@ -13,6 +13,7 @@ fi
 
 exec docker run --rm -it \
   --name "$CONTAINER_NAME" \
+  --env-file "$PROJECT_DIR/.env" \
   -e ANTHROPIC_API_KEY \
   -v "$PROJECT_DIR":/home/node/project \
   -v "$HOME/.claude":/home/node/.claude \
