@@ -5,11 +5,7 @@ IMAGE_NAME="garlic-claude"
 CONTAINER_NAME="garlic-claude"
 PROJECT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
-# Build the image if it doesn't exist
-if ! docker image inspect "$IMAGE_NAME" &>/dev/null; then
-  echo "Building $IMAGE_NAME image..."
-  docker build -t "$IMAGE_NAME" "$PROJECT_DIR"
-fi
+docker build -t "$IMAGE_NAME" "$PROJECT_DIR"
 
 exec docker run --rm -it \
   --name "$CONTAINER_NAME" \
